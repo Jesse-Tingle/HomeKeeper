@@ -57,7 +57,73 @@ const getMaintenanceEventsByAssetId = async (req, res) => {
 	}
 };
 
+
+const createAsset = async (req, res) => {
+	try {
+		const {
+			home_id,
+			name,
+			category,
+			manufacturer,
+			model_number,
+			serial_number,
+			location,
+			install_date,
+			warranty_expiration_date,
+			expected_lifespan_years,
+			purchase_cost,
+			notes,
+			created_by_user_id
+		} = req.body;
+
+		if (!home_id || !name || !category || !created_by_user_id) {
+			return res.status(400).json({error: "Missing required fields"});
+		}
+
+		const result = await pool.query(`
+		  INSERT INTO assets (
+			home_id,
+			name,
+			category,
+			manufacturer,
+			model_number,
+			serial_number,
+			location,
+			install_date,
+			warranty_expiration_date,
+			expected_lifespan_years,
+			purchase_cost,
+			notes,
+			created_by_user_id
+		  )
+		  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+		  RETURNING *;
+		`, [
+			home_id,
+			name,
+			category,
+			manufacturer || null,
+			model_number || null,
+			serial_number || null,
+			location || null,
+			install_date || null,
+			warranty_expiration_date || null,
+			expected_lifespan_years || null,
+			purchase_cost || null,
+			notes || null,
+			created_by_user_id,
+		]);
+
+		return res.status(201).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error creating asset:", error);
+
+		return res.status(500).json({error: "Failed to create asset"});
+	}
+};
+
 module.exports = {
 	getAssetById,
-	getMaintenanceEventsByAssetId
+	getMaintenanceEventsByAssetId,
+	createAsset
 };
