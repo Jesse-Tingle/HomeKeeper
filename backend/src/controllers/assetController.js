@@ -165,9 +165,126 @@ const createMaintenanceEvent = async (req, res) => {
 	}
 };
 
+const updateAsset = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const {
+			home_id,
+			name,
+			category,
+			manufacturer,
+			model_number,
+			serial_number,
+			location,
+			install_date,
+			warranty_expiration_date,
+			expected_lifespan_years,
+			purchase_cost,
+			notes,
+			created_by_user_id
+		} = req.body;
+
+		const result = await pool.query(`
+		  UPDATE assets
+		  SET
+			home_id = $1,
+			name = $2,
+			category = $3,
+			manufacturer = $4,
+			model_number = $5,
+			serial_number = $6,
+			location = $7,
+			install_date = $8,
+			warranty_expiration_date = $9,
+			expected_lifespan_years = $10,
+			purchase_cost = $11,
+			notes = $12,
+			created_by_user_id = $13,
+			updated_at = CURRENT_TIMESTAMP
+		  WHERE id = $14
+		  RETURNING *;
+		`, [
+			home_id,
+			name,
+			category,
+			manufacturer,
+			model_number,
+			serial_number,
+			location,
+			install_date,
+			warranty_expiration_date,
+			expected_lifespan_years,
+			purchase_cost,
+			notes,
+			created_by_user_id,
+			id,
+		]);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		return res.status(200).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error updating asset:", error);
+
+		return res.status(500).json({error: "Failed to update asset"});
+	}
+};
+
+const updateMaintenanceEvent = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const {
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id
+		} = req.body;
+
+		const result = await pool.query(`
+		  UPDATE maintenance_events
+		  SET
+			asset_id = $1,
+			event_type = $2,
+			event_date = $3,
+			cost = $4,
+			notes = $5,
+			created_by_user_id = $6,
+			updated_at = CURRENT_TIMESTAMP
+		  WHERE id = $7
+		  RETURNING *;
+		`, [
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id,
+			id,
+		]);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({error: "Maintenance event not found"});
+		}
+
+		return res.status(200).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error updating maintenance event:", error);
+
+		return res.status(500).json({error: "Failed to update maintenance event"});
+	}
+};
+
 module.exports = {
 	getAssetById,
 	getMaintenanceEventsByAssetId,
 	createAsset,
-	createMaintenanceEvent
+	createMaintenanceEvent,
+	updateAsset,
+	updateMaintenanceEvent
 };
