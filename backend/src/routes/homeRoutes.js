@@ -19,6 +19,7 @@ router.get("/:id/assets", getAssetsByHomeId)
 router.get("/:id", getHomeById);
 router.put("/:id", updateHome);
 
+
 router.delete("/:id", deleteHome);
 
 
