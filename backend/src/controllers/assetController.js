@@ -233,10 +233,58 @@ const updateAsset = async (req, res) => {
 	}
 };
 
+const updateMaintenanceEvent = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const {
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id
+		} = req.body;
+
+		const result = await pool.query(`
+		  UPDATE maintenance_events
+		  SET
+			asset_id = $1,
+			event_type = $2,
+			event_date = $3,
+			cost = $4,
+			notes = $5,
+			created_by_user_id = $6,
+			updated_at = CURRENT_TIMESTAMP
+		  WHERE id = $7
+		  RETURNING *;
+		`, [
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id,
+			id,
+		]);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({error: "Maintenance event not found"});
+		}
+
+		return res.status(200).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error updating maintenance event:", error);
+
+		return res.status(500).json({error: "Failed to update maintenance event"});
+	}
+};
+
 module.exports = {
 	getAssetById,
 	getMaintenanceEventsByAssetId,
 	createAsset,
 	createMaintenanceEvent,
-	updateAsset
+	updateAsset,
+	updateMaintenanceEvent
 };
