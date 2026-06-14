@@ -164,10 +164,44 @@ const updateHome = async (req, res) => {
 	}
 };
 
+const deleteHome = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const assetCheck = await pool.query(`
+        SELECT id
+        FROM assets
+        WHERE home_id = $1
+        LIMIT 1;
+      `, [id]);
+
+		if (assetCheck.rows.length > 0) {
+			return res.status(400).json({error: "Cannot delete home with existing assets"});
+		}
+
+		const result = await pool.query(`
+        DELETE FROM homes
+        WHERE id = $1
+        RETURNING *;
+      `, [id]);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({error: "Home not found"});
+		}
+
+		return res.status(200).json({message: "Home deleted successfully", deletedHome: result.rows[0]});
+	} catch (error) {
+		console.error("Error deleting home:", error);
+
+		return res.status(500).json({error: "Failed to delete home"});
+	}
+};
+
 module.exports = {
 	getHomes,
 	getHomeById,
 	getAssetsByHomeId,
 	createHome,
-	updateHome
+	updateHome,
+	deleteHome
 };
