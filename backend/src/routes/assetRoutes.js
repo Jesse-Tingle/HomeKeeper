@@ -7,7 +7,9 @@ const {
 	createAsset,
 	createMaintenanceEvent,
 	updateAsset,
-	updateMaintenanceEvent
+	updateMaintenanceEvent,
+	deleteMaintenanceEvent,
+	deleteAsset
 } = require("../controllers/assetController");
 
 router.get("/:id/maintenance-events", getMaintenanceEventsByAssetId);
@@ -16,6 +18,9 @@ router.post("/", createAsset);
 router.post("/maintenance-events", createMaintenanceEvent);
 
 router.put("/maintenance-events/:id", updateMaintenanceEvent);
+router.delete("/maintenance-events/:id", deleteMaintenanceEvent);
+router.delete("/:id", deleteAsset);
+
 router.put("/:id", updateAsset);
 
 router.get("/:id", getAssetById);

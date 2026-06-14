@@ -7,7 +7,8 @@ const {
 	getHomeById,
 	getAssetsByHomeId,
 	createHome,
-	updateHome
+	updateHome,
+	deleteHome
 } = require("../controllers/homeController.js");
 
 router.get("/", getHomes);
@@ -17,6 +18,9 @@ router.get("/:id/assets", getAssetsByHomeId)
 
 router.get("/:id", getHomeById);
 router.put("/:id", updateHome);
+
+
+router.delete("/:id", deleteHome);
 
 
 module.exports = router;
