@@ -114,9 +114,60 @@ const createHome = async (req, res) => {
 	}
 };
 
+const updateHome = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const {
+			name,
+			street_address,
+			city,
+			state,
+			postal_code,
+			country,
+			type
+		} = req.body;
+
+		const result = await pool.query(`
+        UPDATE homes
+        SET
+          name = $1,
+          street_address = $2,
+          city = $3,
+          state = $4,
+          postal_code = $5,
+          country = $6,
+          type = $7,
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = $8
+        RETURNING *;
+      `, [
+			name,
+			street_address,
+			city,
+			state,
+			postal_code,
+			country,
+			type,
+			id,
+		]);
+
+		if (result.rows.length === 0) {
+			return res.status(404).json({error: "Home not found"});
+		}
+
+		return res.status(200).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error updating home:", error);
+
+		return res.status(500).json({error: "Failed to update home"});
+	}
+};
+
 module.exports = {
 	getHomes,
 	getHomeById,
 	getAssetsByHomeId,
-	createHome
+	createHome,
+	updateHome
 };
