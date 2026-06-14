@@ -122,8 +122,52 @@ const createAsset = async (req, res) => {
 	}
 };
 
+const createMaintenanceEvent = async (req, res) => {
+	try {
+		const {
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id
+		} = req.body;
+
+		if (!asset_id || !event_type || !event_date || !created_by_user_id) {
+			return res.status(400).json({error: "Missing required fields"});
+		}
+
+		const result = await pool.query(`
+		  INSERT INTO maintenance_events (
+			asset_id,
+			event_type,
+			event_date,
+			cost,
+			notes,
+			created_by_user_id
+		  )
+		  VALUES ($1, $2, $3, $4, $5, $6)
+		  RETURNING *;
+		`, [
+			asset_id,
+			event_type,
+			event_date,
+			cost || null,
+			notes || null,
+			created_by_user_id,
+		]);
+
+		return res.status(201).json(result.rows[0]);
+	} catch (error) {
+		console.error("Error creating maintenance event:", error);
+
+		return res.status(500).json({error: "Failed to create maintenance event"});
+	}
+};
+
 module.exports = {
 	getAssetById,
 	getMaintenanceEventsByAssetId,
-	createAsset
+	createAsset,
+	createMaintenanceEvent
 };
