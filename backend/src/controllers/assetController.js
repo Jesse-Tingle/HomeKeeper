@@ -71,11 +71,12 @@ const createAsset = async (req, res) => {
 			warranty_expiration_date,
 			expected_lifespan_years,
 			purchase_cost,
-			notes,
-			created_by_user_id
+			notes
 		} = req.body;
 
-		if (!home_id || !name || !category || !created_by_user_id) {
+		const created_by_user_id = req.user.userId;
+
+		if (!home_id || !name || !category) {
 			return res.status(400).json({error: "Missing required fields"});
 		}
 
@@ -128,11 +129,12 @@ const createMaintenanceEvent = async (req, res) => {
 			event_type,
 			event_date,
 			cost,
-			notes,
-			created_by_user_id
+			notes
 		} = req.body;
 
-		if (!asset_id || !event_type || !event_date || !created_by_user_id) {
+		const created_by_user_id = req.user.userId;
+
+		if (!asset_id || !event_type || !event_date) {
 			return res.status(400).json({error: "Missing required fields"});
 		}
 

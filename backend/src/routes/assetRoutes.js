@@ -11,11 +11,13 @@ const {
 	deleteMaintenanceEvent,
 	deleteAsset
 } = require("../controllers/assetController");
+const authenticateUser = require("../middleware/authMiddleware");
 
 router.get("/:id/maintenance-events", getMaintenanceEventsByAssetId);
 
-router.post("/", createAsset);
-router.post("/maintenance-events", createMaintenanceEvent);
+router.post("/", authenticateUser, createAsset);
+router.post("/maintenance-events", authenticateUser, createMaintenanceEvent);
+router.post("/maintenance-events", authenticateUser, createMaintenanceEvent);
 
 router.put("/maintenance-events/:id", updateMaintenanceEvent);
 router.delete("/maintenance-events/:id", deleteMaintenanceEvent);

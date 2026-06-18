@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const {
-	getHome,
 	getHomes,
 	getHomeById,
 	getAssetsByHomeId,
@@ -11,8 +10,11 @@ const {
 	deleteHome
 } = require("../controllers/homeController.js");
 
+const authenticateUser = require("../middleware/authMiddleware");
+
+router.post("/", authenticateUser, createHome);
 router.get("/", getHomes);
-router.post("/", createHome);
+router.post("/", authenticateUser, createHome);
 
 router.get("/:id/assets", getAssetsByHomeId)
 

@@ -74,11 +74,12 @@ const createHome = async (req, res) => {
 			state,
 			postal_code,
 			country,
-			type,
-			created_by_user_id
+			type
 		} = req.body;
 
-		if (!name || !street_address || !city || !state || !postal_code || !created_by_user_id) {
+		const created_by_user_id = req.user.userId;
+
+		if (!name || !street_address || !city || !state || !postal_code) {
 			return res.status(400).json({error: "Missing required fields"});
 		}
 
