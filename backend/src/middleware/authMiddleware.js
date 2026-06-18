@@ -18,6 +18,9 @@ const authenticateUser = (req, res, next) => {
 
 		req.user = decoded;
 
+		console.log("Authorization header:", req.headers.authorization);
+		console.log("Decoded token:", decoded);
+
 		next();
 	} catch (error) {
 		return res.status(401).json({error: "Invalid token"});

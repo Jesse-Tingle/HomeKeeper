@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const {userBelongsToHome} = require("../utils/homePermissions");
 
 const getAssetById = async (req, res) => {
 	try {
@@ -78,6 +79,12 @@ const createAsset = async (req, res) => {
 
 		if (!home_id || !name || !category) {
 			return res.status(400).json({error: "Missing required fields"});
+		}
+
+		const membership = await userBelongsToHome(created_by_user_id, home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
 		}
 
 		const result = await pool.query(`

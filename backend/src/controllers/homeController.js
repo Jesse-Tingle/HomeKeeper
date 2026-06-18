@@ -1,21 +1,28 @@
 const pool = require("../config/database");
+const {userBelongsToHome} = require("../utils/homePermissions");
 
 const getHomes = async (req, res) => {
 	try {
+		const userId = req.user.userId;
+
 		const result = await pool.query(`
-      SELECT
-        id,
-        name,
-        street_address,
-        city,
-        state,
-        postal_code,
-        country,
-        type,
-        created_at
-      FROM homes
-      ORDER BY name;
-    `);
+		  SELECT
+			homes.id,
+			homes.name,
+			homes.street_address,
+			homes.city,
+			homes.state,
+			homes.postal_code,
+			homes.country,
+			homes.type,
+			homes.created_at,
+			home_memberships.role
+		  FROM homes
+		  INNER JOIN home_memberships
+			ON homes.id = home_memberships.home_id
+		  WHERE home_memberships.user_id = $1
+		  ORDER BY homes.created_at DESC;
+		`, [userId]);
 
 		return res.status(200).json(result.rows);
 	} catch (error) {
@@ -28,6 +35,12 @@ const getHomes = async (req, res) => {
 const getHomeById = async (req, res) => {
 	try {
 		const {id} = req.params;
+
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
 
 		const result = await pool.query(`
         SELECT *
@@ -107,7 +120,18 @@ const createHome = async (req, res) => {
 			created_by_user_id,
 		]);
 
-		return res.status(201).json(result.rows[0]);
+		const newHome = result.rows[0];
+
+		await pool.query(`
+				INSERT INTO home_memberships (
+				user_id,
+				home_id,
+				role
+				)
+				VALUES ($1, $2, $3);
+			`, [created_by_user_id, newHome.id, "owner"]);
+
+		return res.status(201).json(newHome);
 	} catch (error) {
 		console.error("Error creating home:", error);
 
