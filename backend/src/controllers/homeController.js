@@ -143,6 +143,12 @@ const updateHome = async (req, res) => {
 	try {
 		const {id} = req.params;
 
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
+
 		const {
 			name,
 			street_address,
@@ -193,6 +199,12 @@ const deleteHome = async (req, res) => {
 	try {
 		const {id} = req.params;
 
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
+
 		const assetCheck = await pool.query(`
         SELECT id
         FROM assets
@@ -204,11 +216,16 @@ const deleteHome = async (req, res) => {
 			return res.status(400).json({error: "Cannot delete home with existing assets"});
 		}
 
+		await pool.query(`
+			  DELETE FROM home_memberships
+			  WHERE home_id = $1;
+			`, [id]);
+
 		const result = await pool.query(`
-        DELETE FROM homes
-        WHERE id = $1
-        RETURNING *;
-      `, [id]);
+			  DELETE FROM homes
+			  WHERE id = $1
+			  RETURNING *;
+			`, [id]);
 
 		if (result.rows.length === 0) {
 			return res.status(404).json({error: "Home not found"});
