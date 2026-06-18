@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const {
-	getHome,
 	getHomes,
 	getHomeById,
 	getAssetsByHomeId,
@@ -11,16 +10,19 @@ const {
 	deleteHome
 } = require("../controllers/homeController.js");
 
-router.get("/", getHomes);
-router.post("/", createHome);
+const authenticateUser = require("../middleware/authMiddleware");
 
-router.get("/:id/assets", getAssetsByHomeId)
+router.post("/", authenticateUser, createHome);
+router.get("/", authenticateUser, getHomes);
+router.post("/", authenticateUser, createHome);
 
-router.get("/:id", getHomeById);
-router.put("/:id", updateHome);
+router.get("/:id/assets", authenticateUser, getAssetsByHomeId)
+
+router.get("/:id", authenticateUser, getHomeById);
+router.put("/:id", authenticateUser, updateHome);
 
 
-router.delete("/:id", deleteHome);
+router.delete("/:id", authenticateUser, deleteHome);
 
 
 module.exports = router;

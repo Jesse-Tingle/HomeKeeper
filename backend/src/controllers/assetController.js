@@ -1,4 +1,5 @@
 const pool = require("../config/database");
+const {userBelongsToHome} = require("../utils/homePermissions");
 
 const getAssetById = async (req, res) => {
 	try {
@@ -71,12 +72,19 @@ const createAsset = async (req, res) => {
 			warranty_expiration_date,
 			expected_lifespan_years,
 			purchase_cost,
-			notes,
-			created_by_user_id
+			notes
 		} = req.body;
 
-		if (!home_id || !name || !category || !created_by_user_id) {
+		const created_by_user_id = req.user.userId;
+
+		if (!home_id || !name || !category) {
 			return res.status(400).json({error: "Missing required fields"});
+		}
+
+		const membership = await userBelongsToHome(created_by_user_id, home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
 		}
 
 		const result = await pool.query(`
@@ -128,11 +136,12 @@ const createMaintenanceEvent = async (req, res) => {
 			event_type,
 			event_date,
 			cost,
-			notes,
-			created_by_user_id
+			notes
 		} = req.body;
 
-		if (!asset_id || !event_type || !event_date || !created_by_user_id) {
+		const created_by_user_id = req.user.userId;
+
+		if (!asset_id || !event_type || !event_date) {
 			return res.status(400).json({error: "Missing required fields"});
 		}
 
