@@ -11,21 +11,22 @@ const {
 	deleteMaintenanceEvent,
 	deleteAsset
 } = require("../controllers/assetController");
+
 const authenticateUser = require("../middleware/authMiddleware");
 
-router.get("/:id/maintenance-events", getMaintenanceEventsByAssetId);
+router.get("/:id/maintenance-events", authenticateUser, getMaintenanceEventsByAssetId);
 
 router.post("/", authenticateUser, createAsset);
 router.post("/maintenance-events", authenticateUser, createMaintenanceEvent);
 router.post("/maintenance-events", authenticateUser, createMaintenanceEvent);
 
-router.put("/maintenance-events/:id", updateMaintenanceEvent);
-router.delete("/maintenance-events/:id", deleteMaintenanceEvent);
-router.delete("/:id", deleteAsset);
+router.put("/maintenance-events/:id", authenticateUser, updateMaintenanceEvent);
+router.delete("/maintenance-events/:id", authenticateUser, deleteMaintenanceEvent);
+router.delete("/:id", authenticateUser, deleteAsset);
 
-router.put("/:id", updateAsset);
+router.put("/:id", authenticateUser, updateAsset);
 
-router.get("/:id", getAssetById);
+router.get("/:id", authenticateUser, getAssetById);
 
 
 module.exports = router;

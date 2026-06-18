@@ -13,16 +13,16 @@ const {
 const authenticateUser = require("../middleware/authMiddleware");
 
 router.post("/", authenticateUser, createHome);
-router.get("/", getHomes);
+router.get("/", authenticateUser, getHomes);
 router.post("/", authenticateUser, createHome);
 
-router.get("/:id/assets", getAssetsByHomeId)
+router.get("/:id/assets", authenticateUser, getAssetsByHomeId)
 
-router.get("/:id", getHomeById);
-router.put("/:id", updateHome);
+router.get("/:id", authenticateUser, getHomeById);
+router.put("/:id", authenticateUser, updateHome);
 
 
-router.delete("/:id", deleteHome);
+router.delete("/:id", authenticateUser, deleteHome);
 
 
 module.exports = router;
