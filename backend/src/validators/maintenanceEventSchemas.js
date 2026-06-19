@@ -1,0 +1,29 @@
+const {z} = require("zod");
+
+const createMaintenanceEventSchema = z.object({
+	asset_id: z.string().uuid("Invalid asset ID"),
+
+	event_type: z.enum(
+		[
+			"inspection", "service", "repair", "replacement"
+		],
+		{
+			errorMap: () => (
+				{message: "Event type must be inspection, service, repair, or replacement"}
+			)
+		}
+	),
+
+	event_date: z.string().min(1, "Event date is required"),
+
+	cost: z.number().nonnegative("Cost cannot be negative").optional(),
+
+	notes: z.string().trim().optional()
+});
+
+const updateMaintenanceEventSchema = createMaintenanceEventSchema;
+
+module.exports = {
+	createMaintenanceEventSchema,
+	updateMaintenanceEventSchema
+};
