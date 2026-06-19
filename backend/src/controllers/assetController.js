@@ -145,6 +145,24 @@ const createMaintenanceEvent = async (req, res) => {
 			return res.status(400).json({error: "Missing required fields"});
 		}
 
+		const assetCheck = await pool.query(`
+			  SELECT id, home_id
+			  FROM assets
+			  WHERE id = $1;
+			`, [asset_id]);
+
+		if (assetCheck.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		const asset = assetCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, asset.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this asset"});
+		}
+
 		const result = await pool.query(`
 		  INSERT INTO maintenance_events (
 			asset_id,
@@ -176,6 +194,24 @@ const createMaintenanceEvent = async (req, res) => {
 const updateAsset = async (req, res) => {
 	try {
 		const {id} = req.params;
+
+		const assetCheck = await pool.query(`
+			  SELECT id, home_id
+			  FROM assets
+			  WHERE id = $1;
+			`, [id]);
+
+		if (assetCheck.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		const existingAsset = assetCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this asset"});
+		}
 
 		const {
 			home_id,
@@ -245,14 +281,38 @@ const updateMaintenanceEvent = async (req, res) => {
 	try {
 		const {id} = req.params;
 
+		const eventCheck = await pool.query(`
+			  SELECT
+				maintenance_events.id,
+				maintenance_events.asset_id,
+				assets.home_id
+			  FROM maintenance_events
+			  INNER JOIN assets
+				ON maintenance_events.asset_id = assets.id
+			  WHERE maintenance_events.id = $1;
+			`, [id]);
+
+		if (eventCheck.rows.length === 0) {
+			return res.status(404).json({error: "Maintenance event not found"});
+		}
+
+		const existingEvent = eventCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingEvent.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this maintenance event"});
+		}
+
 		const {
 			asset_id,
 			event_type,
 			event_date,
 			cost,
-			notes,
-			created_by_user_id
+			notes
 		} = req.body;
+
+		const created_by_user_id = req.user.userId;
 
 		const result = await pool.query(`
 		  UPDATE maintenance_events
@@ -292,15 +352,35 @@ const deleteMaintenanceEvent = async (req, res) => {
 	try {
 		const {id} = req.params;
 
+		const eventCheck = await pool.query(`
+			  SELECT
+				maintenance_events.id,
+				maintenance_events.asset_id,
+				assets.home_id
+			  FROM maintenance_events
+			  INNER JOIN assets
+				ON maintenance_events.asset_id = assets.id
+			  WHERE maintenance_events.id = $1;
+			`, [id]);
+
+		if (eventCheck.rows.length === 0) {
+			return res.status(404).json({error: "Maintenance event not found"});
+		}
+
+		const existingEvent = eventCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingEvent.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this maintenance event"});
+		}
+
+
 		const result = await pool.query(`
 		  DELETE FROM maintenance_events
 		  WHERE id = $1
 		  RETURNING *;
 		`, [id]);
-
-		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Maintenance event not found"});
-		}
 
 		return res.status(200).json({message: "Maintenance event deleted successfully", deletedMaintenanceEvent: result.rows[0]});
 	} catch (error) {
@@ -313,6 +393,24 @@ const deleteMaintenanceEvent = async (req, res) => {
 const deleteAsset = async (req, res) => {
 	try {
 		const {id} = req.params;
+
+		const assetCheck = await pool.query(`
+			  SELECT id, home_id
+			  FROM assets
+			  WHERE id = $1;
+			`, [id]);
+
+		if (assetCheck.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		const existingAsset = assetCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this asset"});
+		}
 
 		const maintenanceCheck = await pool.query(`
 		  SELECT id
