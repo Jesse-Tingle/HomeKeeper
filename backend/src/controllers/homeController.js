@@ -205,6 +205,10 @@ const deleteHome = async (req, res) => {
 			return res.status(403).json({error: "You do not have access to this home"});
 		}
 
+		if (membership.role !== "owner") {
+			return res.status(403).json({error: "Only owners can delete homes"});
+		}
+
 		const assetCheck = await pool.query(`
         SELECT id
         FROM assets
@@ -239,11 +243,162 @@ const deleteHome = async (req, res) => {
 	}
 };
 
+const getHomeMembers = async (req, res) => {
+	try {
+		const {id} = req.params;
+
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
+
+		const result = await pool.query(`
+		  SELECT
+			users.id,
+			users.name,
+			users.email,
+			home_memberships.role,
+			home_memberships.joined_at
+		  FROM home_memberships
+		  INNER JOIN users
+			ON home_memberships.user_id = users.id
+		  WHERE home_memberships.home_id = $1
+		  ORDER BY users.name;
+		`, [id]);
+
+		return res.status(200).json(result.rows);
+	} catch (error) {
+		console.error("Error fetching home members:", error);
+
+		return res.status(500).json({error: "Failed to retrieve home members"});
+	}
+};
+
+const addHomeMember = async (req, res) => {
+	try {
+		const {id} = req.params;
+		const {email, role} = req.body;
+
+		if (!email) {
+			return res.status(400).json({error: "Email is required"});
+		}
+
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
+
+		if (membership.role !== "owner") {
+			return res.status(403).json({error: "Only owners can add home members"});
+		}
+
+		const userResult = await pool.query(`
+		  SELECT id, name, email
+		  FROM users
+		  WHERE email = $1;
+		`, [email]);
+
+		if (userResult.rows.length === 0) {
+			return res.status(404).json({error: "User not found"});
+		}
+
+		const userToAdd = userResult.rows[0];
+
+		const newMember = await pool.query(`
+		  INSERT INTO home_memberships (
+			user_id,
+			home_id,
+			role
+		  )
+		  VALUES ($1, $2, $3)
+		  RETURNING *;
+		`, [
+			userToAdd.id,
+			id,
+			role || "member"
+		]);
+
+		return res.status(201).json({
+			message: "Home member added successfully",
+			member: {
+				id: userToAdd.id,
+				name: userToAdd.name,
+				email: userToAdd.email,
+				role: newMember.rows[0].role,
+				joined_at: newMember.rows[0].joined_at
+			}
+		});
+	} catch (error) {
+		console.error("Error adding home member:", error);
+
+		return res.status(500).json({error: "Failed to add home member"});
+	}
+};
+
+const removeHomeMember = async (req, res) => {
+	try {
+		const {id, userId} = req.params;
+
+		const membership = await userBelongsToHome(req.user.userId, id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this home"});
+		}
+
+		if (membership.role !== "owner") {
+			return res.status(403).json({error: "Only owners can remove members"});
+		}
+
+		const targetMembership = await pool.query(`
+		  SELECT *
+		  FROM home_memberships
+		  WHERE home_id = $1
+		  AND user_id = $2;
+		`, [id, userId]);
+
+		if (targetMembership.rows.length === 0) {
+			return res.status(404).json({error: "Member not found"});
+		}
+
+		// Prevent deleting the last owner
+		if (targetMembership.rows[0].role === "owner") {
+			const ownerCount = await pool.query(`
+			SELECT COUNT(*) AS count
+			FROM home_memberships
+			WHERE home_id = $1
+			AND role = 'owner';
+		  `, [id]);
+
+			if (parseInt(ownerCount.rows[0].count) === 1) {
+				return res.status(400).json({error: "Cannot remove the last owner"});
+			}
+		}
+
+		const result = await pool.query(`
+		  DELETE FROM home_memberships
+		  WHERE home_id = $1
+		  AND user_id = $2
+		  RETURNING *;
+		`, [id, userId]);
+
+		return res.status(200).json({message: "Member removed successfully", removedMember: result.rows[0]});
+	} catch (error) {
+		console.error("Error removing home member:", error);
+
+		return res.status(500).json({error: "Failed to remove home member"});
+	}
+};
+
 module.exports = {
 	getHomes,
 	getHomeById,
 	getAssetsByHomeId,
 	createHome,
 	updateHome,
-	deleteHome
+	deleteHome,
+	getHomeMembers,
+	addHomeMember,
+	removeHomeMember
 };
