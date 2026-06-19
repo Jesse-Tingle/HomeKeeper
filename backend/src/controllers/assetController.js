@@ -177,6 +177,24 @@ const updateAsset = async (req, res) => {
 	try {
 		const {id} = req.params;
 
+		const assetCheck = await pool.query(`
+			  SELECT id, home_id
+			  FROM assets
+			  WHERE id = $1;
+			`, [id]);
+
+		if (assetCheck.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		const existingAsset = assetCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this asset"});
+		}
+
 		const {
 			home_id,
 			name,
@@ -313,6 +331,24 @@ const deleteMaintenanceEvent = async (req, res) => {
 const deleteAsset = async (req, res) => {
 	try {
 		const {id} = req.params;
+
+		const assetCheck = await pool.query(`
+			  SELECT id, home_id
+			  FROM assets
+			  WHERE id = $1;
+			`, [id]);
+
+		if (assetCheck.rows.length === 0) {
+			return res.status(404).json({error: "Asset not found"});
+		}
+
+		const existingAsset = assetCheck.rows[0];
+
+		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
+
+		if (! membership) {
+			return res.status(403).json({error: "You do not have access to this asset"});
+		}
 
 		const maintenanceCheck = await pool.query(`
 		  SELECT id
