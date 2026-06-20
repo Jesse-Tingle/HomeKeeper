@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-import apiClient from "../api/apiClient";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -30,9 +30,7 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const data = await apiClient.post("/auth/login", formData);
-
-            localStorage.setItem("token", data.token);
+            const data = await login(formData.email, formData.password);
 
             navigate("/");
         } catch (error) {
