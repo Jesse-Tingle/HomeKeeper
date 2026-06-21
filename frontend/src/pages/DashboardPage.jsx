@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import { useAuth } from "../context/AuthContext";
 
@@ -211,11 +210,12 @@ export default function DashboardPage() {
                             <li key={home.id}>
                                 <h3>{home.name}</h3>
                                 <p>
-                                    {home.street_address}, {home.city}, {home.state}{" "}
-                                    {home.postal_code}
+                                    {home.street_address}, {home.city}, {home.state} {home.postal_code}
                                 </p>
                                 <p>Type: {home.type || "Not specified"}</p>
                                 {home.role && <p>Role: {home.role}</p>}
+
+                                <Link to={`/homes/${home.id}`}>View Details</Link>
                             </li>
                         ))}
                     </ul>
