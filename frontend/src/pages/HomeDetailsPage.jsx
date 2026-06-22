@@ -18,7 +18,8 @@ export default function HomeDetailsPage() {
         manufacturer: "",
         model_number: "",
         serial_number: "",
-        location: ""
+        location: "",
+        purchase_cost: ""
     });
 
     useEffect(() => {
@@ -62,7 +63,10 @@ export default function HomeDetailsPage() {
                 manufacturer: assetForm.manufacturer || undefined,
                 model_number: assetForm.model_number || undefined,
                 serial_number: assetForm.serial_number || undefined,
-                location: assetForm.location || undefined
+                location: assetForm.location || undefined,
+                purchase_cost: assetForm.purchase_cost
+                    ? Number(assetForm.purchase_cost)
+                    : undefined
             };
 
             const newAsset = await apiClient.post("/assets", payload);
@@ -75,7 +79,8 @@ export default function HomeDetailsPage() {
                 manufacturer: "",
                 model_number: "",
                 serial_number: "",
-                location: ""
+                location: "",
+                purchase_cost: ""
             });
         } catch (error) {
             setError(error.message);
@@ -187,6 +192,19 @@ export default function HomeDetailsPage() {
                         />
                     </div>
 
+                    <div>
+                        <label htmlFor="asset-purchase-cost">Purchase Cost</label>
+                        <input
+                            id="asset-purchase-cost"
+                            name="purchase_cost"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            value={assetForm.purchase_cost}
+                            onChange={handleAssetChange}
+                        />
+                    </div>
+
                     <button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Adding..." : "Add Asset"}
                     </button>
@@ -208,6 +226,10 @@ export default function HomeDetailsPage() {
                                 <p>Manufacturer: {asset.manufacturer || "Not specified"}</p>
                                 <p>Model: {asset.model_number || "Not specified"}</p>
                                 <p>Serial: {asset.serial_number || "Not specified"}</p>
+                                <p>
+                                    Purchase Cost:{" "}
+                                    {asset.purchase_cost ? `$${asset.purchase_cost}` : "Not specified"}
+                                </p>
 
                                 <Link to={`/assets/${asset.id}`}>View Asset Details</Link>
                             </li>
