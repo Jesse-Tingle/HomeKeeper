@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import HomeDetailsPage from "./pages/HomeDetailsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AssetDetailsPage from "./pages/AssetDetailsPage";
 
 function App() {
   return (
@@ -23,6 +24,14 @@ function App() {
           element={
             <ProtectedRoute>
               <HomeDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/assets/:id"
+          element={
+            <ProtectedRoute>
+              <AssetDetailsPage />
             </ProtectedRoute>
           }
         />

@@ -208,6 +208,8 @@ export default function HomeDetailsPage() {
                                 <p>Manufacturer: {asset.manufacturer || "Not specified"}</p>
                                 <p>Model: {asset.model_number || "Not specified"}</p>
                                 <p>Serial: {asset.serial_number || "Not specified"}</p>
+
+                                <Link to={`/assets/${asset.id}`}>View Asset Details</Link>
                             </li>
                         ))}
                     </ul>
