@@ -26,6 +26,8 @@ const apiClient = {
 
         const data = await response.json();
 
+        console.log("POST response data:", data);
+
         if (!response.ok) {
             throw new Error(data.error || "Request failed");
         }
@@ -44,6 +46,8 @@ const apiClient = {
         );
 
         const data = await response.json();
+
+        console.log("POST response data:", data);
 
         if (!response.ok) {
             throw new Error(data.error || "Request failed");
@@ -64,6 +68,8 @@ const apiClient = {
 
         const data = await response.json();
 
+        console.log("POST response data:", data);
+
         if (!response.ok) {
             throw new Error(data.error || "Request failed");
         }
@@ -81,6 +87,8 @@ const apiClient = {
         );
 
         const data = await response.json();
+
+        console.log("POST response data:", data);
 
         if (!response.ok) {
             throw new Error(data.error || "Request failed");

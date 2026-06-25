@@ -1,9 +1,9 @@
 const pool = require("../config/database");
-const {userBelongsToHome} = require("../utils/homePermissions");
+const { userBelongsToHome } = require("../utils/homePermissions");
 
 const getAssetById = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 
 		const result = await pool.query(`
@@ -13,7 +13,7 @@ const getAssetById = async (req, res) => {
   `, [id]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
 		return res.status(200).json(result.rows[0]);
@@ -23,7 +23,7 @@ const getAssetById = async (req, res) => {
 		console.error("Error fetching asset:", error);
 
 
-		return res.status(500).json({error: "Failed to retrieve asset"});
+		return res.status(500).json({ error: "Failed to retrieve asset" });
 
 
 	}
@@ -31,30 +31,20 @@ const getAssetById = async (req, res) => {
 
 const getMaintenanceEventsByAssetId = async (req, res) => {
 	try {
-		const {id} = req.params;
-
+		const { id } = req.params;
 
 		const result = await pool.query(`
-        SELECT *
-        FROM maintenance_events
-        WHERE asset_id = $1
-        ORDER BY event_date DESC;
-  `, [id]);
-
-		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Maintenance event not found"});
-		}
+			SELECT *
+			FROM maintenance_events
+			WHERE asset_id = $1
+			ORDER BY event_date DESC;
+		`, [id]);
 
 		return res.status(200).json(result.rows);
-
-
 	} catch (error) {
-		console.error("Error fetching maintenance event:", error);
+		console.error("Error fetching maintenance events:", error);
 
-
-		return res.status(500).json({error: "Failed to retrieve maintenance event"});
-
-
+		return res.status(500).json({ error: "Failed to retrieve maintenance events" });
 	}
 };
 
@@ -78,13 +68,13 @@ const createAsset = async (req, res) => {
 		const created_by_user_id = req.user.userId;
 
 		if (!home_id || !name || !category) {
-			return res.status(400).json({error: "Missing required fields"});
+			return res.status(400).json({ error: "Missing required fields" });
 		}
 
 		const membership = await userBelongsToHome(created_by_user_id, home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		const result = await pool.query(`
@@ -125,7 +115,7 @@ const createAsset = async (req, res) => {
 	} catch (error) {
 		console.error("Error creating asset:", error);
 
-		return res.status(500).json({error: "Failed to create asset"});
+		return res.status(500).json({ error: "Failed to create asset" });
 	}
 };
 
@@ -142,7 +132,7 @@ const createMaintenanceEvent = async (req, res) => {
 		const created_by_user_id = req.user.userId;
 
 		if (!asset_id || !event_type || !event_date) {
-			return res.status(400).json({error: "Missing required fields"});
+			return res.status(400).json({ error: "Missing required fields" });
 		}
 
 		const assetCheck = await pool.query(`
@@ -152,15 +142,15 @@ const createMaintenanceEvent = async (req, res) => {
 			`, [asset_id]);
 
 		if (assetCheck.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
 		const asset = assetCheck.rows[0];
 
 		const membership = await userBelongsToHome(req.user.userId, asset.home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this asset"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this asset" });
 		}
 
 		const result = await pool.query(`
@@ -187,13 +177,13 @@ const createMaintenanceEvent = async (req, res) => {
 	} catch (error) {
 		console.error("Error creating maintenance event:", error);
 
-		return res.status(500).json({error: "Failed to create maintenance event"});
+		return res.status(500).json({ error: "Failed to create maintenance event" });
 	}
 };
 
 const updateAsset = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const assetCheck = await pool.query(`
 			  SELECT id, home_id
@@ -202,15 +192,15 @@ const updateAsset = async (req, res) => {
 			`, [id]);
 
 		if (assetCheck.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
 		const existingAsset = assetCheck.rows[0];
 
 		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this asset"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this asset" });
 		}
 
 		const {
@@ -266,20 +256,20 @@ const updateAsset = async (req, res) => {
 		]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
 		console.error("Error updating asset:", error);
 
-		return res.status(500).json({error: "Failed to update asset"});
+		return res.status(500).json({ error: "Failed to update asset" });
 	}
 };
 
 const updateMaintenanceEvent = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const eventCheck = await pool.query(`
 			  SELECT
@@ -293,15 +283,15 @@ const updateMaintenanceEvent = async (req, res) => {
 			`, [id]);
 
 		if (eventCheck.rows.length === 0) {
-			return res.status(404).json({error: "Maintenance event not found"});
+			return res.status(404).json({ error: "Maintenance event not found" });
 		}
 
 		const existingEvent = eventCheck.rows[0];
 
 		const membership = await userBelongsToHome(req.user.userId, existingEvent.home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this maintenance event"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this maintenance event" });
 		}
 
 		const {
@@ -337,20 +327,20 @@ const updateMaintenanceEvent = async (req, res) => {
 		]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Maintenance event not found"});
+			return res.status(404).json({ error: "Maintenance event not found" });
 		}
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
 		console.error("Error updating maintenance event:", error);
 
-		return res.status(500).json({error: "Failed to update maintenance event"});
+		return res.status(500).json({ error: "Failed to update maintenance event" });
 	}
 };
 
 const deleteMaintenanceEvent = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const eventCheck = await pool.query(`
 			  SELECT
@@ -364,15 +354,15 @@ const deleteMaintenanceEvent = async (req, res) => {
 			`, [id]);
 
 		if (eventCheck.rows.length === 0) {
-			return res.status(404).json({error: "Maintenance event not found"});
+			return res.status(404).json({ error: "Maintenance event not found" });
 		}
 
 		const existingEvent = eventCheck.rows[0];
 
 		const membership = await userBelongsToHome(req.user.userId, existingEvent.home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this maintenance event"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this maintenance event" });
 		}
 
 
@@ -382,17 +372,17 @@ const deleteMaintenanceEvent = async (req, res) => {
 		  RETURNING *;
 		`, [id]);
 
-		return res.status(200).json({message: "Maintenance event deleted successfully", deletedMaintenanceEvent: result.rows[0]});
+		return res.status(200).json({ message: "Maintenance event deleted successfully", deletedMaintenanceEvent: result.rows[0] });
 	} catch (error) {
 		console.error("Error deleting maintenance event:", error);
 
-		return res.status(500).json({error: "Failed to delete maintenance event"});
+		return res.status(500).json({ error: "Failed to delete maintenance event" });
 	}
 };
 
 const deleteAsset = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const assetCheck = await pool.query(`
 			  SELECT id, home_id
@@ -401,15 +391,15 @@ const deleteAsset = async (req, res) => {
 			`, [id]);
 
 		if (assetCheck.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
 		const existingAsset = assetCheck.rows[0];
 
 		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this asset"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this asset" });
 		}
 
 		const maintenanceCheck = await pool.query(`
@@ -420,7 +410,7 @@ const deleteAsset = async (req, res) => {
 		`, [id]);
 
 		if (maintenanceCheck.rows.length > 0) {
-			return res.status(400).json({error: "Cannot delete asset with existing maintenance events"});
+			return res.status(400).json({ error: "Cannot delete asset with existing maintenance events" });
 		}
 
 		const result = await pool.query(`
@@ -430,14 +420,14 @@ const deleteAsset = async (req, res) => {
 		`, [id]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Asset not found"});
+			return res.status(404).json({ error: "Asset not found" });
 		}
 
-		return res.status(200).json({message: "Asset deleted successfully", deletedAsset: result.rows[0]});
+		return res.status(200).json({ message: "Asset deleted successfully", deletedAsset: result.rows[0] });
 	} catch (error) {
 		console.error("Error deleting asset:", error);
 
-		return res.status(500).json({error: "Failed to delete asset"});
+		return res.status(500).json({ error: "Failed to delete asset" });
 	}
 };
 
