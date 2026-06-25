@@ -10,7 +10,6 @@ export default function AssetDetailsPage() {
     const [events, setEvents] = useState([]);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [eventForm, setEventForm] = useState({
         event_type: "inspection",
@@ -18,6 +17,8 @@ export default function AssetDetailsPage() {
         cost: "",
         notes: ""
     });
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchAssetDetails = async () => {
