@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import apiClient from "../api/apiClient";
-import { useAuth } from "../context/AuthContext";
 
 export default function DashboardPage() {
-    const navigate = useNavigate();
-    const { user, logout } = useAuth();
-
     const [homes, setHomes] = useState([]);
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -36,11 +33,6 @@ export default function DashboardPage() {
 
         fetchHomes();
     }, []);
-
-    const handleLogout = () => {
-        logout();
-        navigate("/login");
-    };
 
     const handleHomeChange = (event) => {
         const { name, value } = event.target;
@@ -90,15 +82,7 @@ export default function DashboardPage() {
 
     return (
         <main>
-            <header>
-                <h1>Dashboard</h1>
-
-                {user && <p>Welcome, {user.name}</p>}
-
-                <button type="button" onClick={handleLogout}>
-                    Logout
-                </button>
-            </header>
+            <h1>Dashboard</h1>
 
             <section>
                 <h2>Create Home</h2>
@@ -209,10 +193,14 @@ export default function DashboardPage() {
                         {homes.map((home) => (
                             <li key={home.id}>
                                 <h3>{home.name}</h3>
+
                                 <p>
-                                    {home.street_address}, {home.city}, {home.state} {home.postal_code}
+                                    {home.street_address}, {home.city}, {home.state}{" "}
+                                    {home.postal_code}
                                 </p>
+
                                 <p>Type: {home.type || "Not specified"}</p>
+
                                 {home.role && <p>Role: {home.role}</p>}
 
                                 <Link to={`/homes/${home.id}`}>View Details</Link>
