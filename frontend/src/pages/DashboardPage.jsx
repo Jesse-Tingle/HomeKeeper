@@ -185,28 +185,72 @@ export default function DashboardPage() {
                 {error && <p>{error}</p>}
 
                 {!isLoading && !error && homes.length === 0 && (
-                    <p>You do not have any homes yet.</p>
+                    <div className="empty-state">
+                        <h3>No homes yet</h3>
+
+                        <p>
+                            Create your first home to start tracking assets and maintenance.
+                        </p>
+                    </div>
                 )}
 
                 {homes.length > 0 && (
-                    <ul>
+                    <div className="card-grid">
                         {homes.map((home) => (
-                            <li key={home.id}>
-                                <h3>{home.name}</h3>
+                            <article className="card" key={home.id}>
+                                <div className="card__header">
+                                    <div>
+                                        <h3 className="card__title">{home.name}</h3>
 
-                                <p>
-                                    {home.street_address}, {home.city}, {home.state}{" "}
-                                    {home.postal_code}
-                                </p>
+                                        <p className="card__subtitle">
+                                            {home.street_address}
+                                        </p>
+                                    </div>
 
-                                <p>Type: {home.type || "Not specified"}</p>
+                                    {home.role && (
+                                        <span className="badge badge--primary">
+                                            {home.role}
+                                        </span>
+                                    )}
+                                </div>
 
-                                {home.role && <p>Role: {home.role}</p>}
+                                <div className="card__body">
+                                    <div className="card__row">
+                                        <span className="card__label">Location</span>
 
-                                <Link to={`/homes/${home.id}`}>View Details</Link>
-                            </li>
+                                        <span className="card__value">
+                                            {home.city}, {home.state} {home.postal_code}
+                                        </span>
+                                    </div>
+
+                                    <div className="card__row">
+                                        <span className="card__label">Country</span>
+
+                                        <span className="card__value">
+                                            {home.country || "Not specified"}
+                                        </span>
+                                    </div>
+
+                                    <div className="card__row">
+                                        <span className="card__label">Type</span>
+
+                                        <span className="card__value">
+                                            {home.type || "Not specified"}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="card__footer">
+                                    <Link
+                                        className="card__link"
+                                        to={`/homes/${home.id}`}
+                                    >
+                                        View Details
+                                    </Link>
+                                </div>
+                            </article>
                         ))}
-                    </ul>
+                    </div>
                 )}
             </section>
         </main>
