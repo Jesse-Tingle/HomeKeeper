@@ -1,0 +1,233 @@
+/* ===========================
+   CSS Reset
+=========================== */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* ===========================
+   Base Styles
+=========================== */
+
+:root {
+	--color-primary: #2563eb;
+	--color-primary-hover: #1d4ed8;
+
+	--color-background: #f5f7fb;
+	--color-surface: #ffffff;
+
+	--color-text: #1f2937;
+	--color-text-light: #6b7280;
+
+	--color-border: #d1d5db;
+
+	--color-success: #16a34a;
+	--color-danger: #dc2626;
+	--color-warning: #d97706;
+
+	--shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+	--shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+	--border-radius: 8px;
+
+	font-family:
+		Inter,
+		"Segoe UI",
+		Roboto,
+		Helvetica,
+		Arial,
+		sans-serif;
+}
+
+body {
+	background: var(--color-background);
+	color: var(--color-text);
+	line-height: 1.5;
+	min-height: 100vh;
+}
+
+/* ===========================
+   Typography
+=========================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 600;
+	line-height: 1.2;
+	margin-bottom: 1rem;
+}
+
+h1 {
+	font-size: 2rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+}
+
+p {
+	margin-bottom: 1rem;
+}
+
+/* ===========================
+   Links
+=========================== */
+
+a {
+	color: var(--color-primary);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/* ===========================
+   Lists
+=========================== */
+
+ul {
+	list-style: none;
+}
+
+/* ===========================
+   Images
+=========================== */
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+/* ===========================
+   Form Elements
+=========================== */
+
+label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 0.35rem;
+}
+
+input,
+textarea,
+select {
+	width: 100%;
+	padding: 0.75rem;
+
+	font: inherit;
+
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+
+	background: white;
+	color: var(--color-text);
+
+	margin-bottom: 1rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+button {
+	cursor: pointer;
+
+	padding: 0.75rem 1.25rem;
+
+	font: inherit;
+	font-weight: 600;
+
+	color: white;
+	background: var(--color-primary);
+
+	border: none;
+	border-radius: var(--border-radius);
+
+	transition: background-color 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+	background: var(--color-primary-hover);
+}
+
+button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* ===========================
+   Sections
+=========================== */
+
+main {
+	max-width: 1200px;
+	margin: 2rem auto;
+	padding: 0 1.5rem;
+}
+
+section {
+	background: var(--color-surface);
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+
+	border-radius: var(--border-radius);
+	box-shadow: var(--shadow-sm);
+}
+
+/* ===========================
+   Utility Classes
+=========================== */
+
+.text-center {
+	text-align: center;
+}
+
+.text-danger {
+	color: var(--color-danger);
+}
+
+.text-success {
+	color: var(--color-success);
+}
+
+.text-muted {
+	color: var(--color-text-light);
+}
+
+.mt-1 {
+	margin-top: 1rem;
+}
+
+.mt-2 {
+	margin-top: 2rem;
+}
+
+.mb-1 {
+	margin-bottom: 1rem;
+}
+
+.mb-2 {
+	margin-bottom: 2rem;
+}
