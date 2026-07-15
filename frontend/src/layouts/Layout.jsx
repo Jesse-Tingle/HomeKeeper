@@ -34,7 +34,7 @@ export default function Layout() {
                         )}
 
                         <button
-                            className="app-nav__logout"
+                            className="btn btn--primary"
                             type="button"
                             onClick={handleLogout}
                         >

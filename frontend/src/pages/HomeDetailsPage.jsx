@@ -205,7 +205,7 @@ export default function HomeDetailsPage() {
                         />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting}>
+                    <button type="submit" className="btn btn--secondary" disabled={isSubmitting}>
                         {isSubmitting ? "Adding..." : "Add Asset"}
                     </button>
                 </form>

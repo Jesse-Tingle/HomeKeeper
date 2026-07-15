@@ -171,7 +171,7 @@ export default function DashboardPage() {
                         />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting}>
+                    <button type="submit" className="btn btn--secondary" disabled={isSubmitting}>
                         {isSubmitting ? "Creating..." : "Create Home"}
                     </button>
                 </form>
