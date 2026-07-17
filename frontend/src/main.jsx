@@ -3,6 +3,11 @@ import ReactDOM from "react-dom/client";
 
 import App from "./App";
 import "./index.css";
+import "./styles/buttons.css"
+import "./styles/cards.css"
+import "./styles/forms.css"
+import "./styles/global.css"
+import "./styles/layout.css"
 
 import { AuthProvider } from "./context/AuthContext";
 

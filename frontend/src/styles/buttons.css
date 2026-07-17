@@ -1,0 +1,180 @@
+/* ===========================
+   Base Button
+=========================== */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+
+	padding: 0.75rem 1.25rem;
+
+	font: inherit;
+	font-weight: 600;
+
+	border: none;
+	border-radius: var(--border-radius);
+
+	cursor: pointer;
+	text-decoration: none;
+
+	transition:
+		background-color 0.2s ease,
+		color 0.2s ease,
+		border-color 0.2s ease,
+		transform 0.15s ease,
+		box-shadow 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+	transform: translateY(-1px);
+	box-shadow: var(--shadow-sm);
+}
+
+.btn:active:not(:disabled) {
+	transform: translateY(0);
+}
+
+.btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+	box-shadow: none;
+}
+
+/* ===========================
+   Primary
+=========================== */
+
+.btn--primary {
+	background: var(--color-primary);
+	color: white;
+}
+
+.btn--primary:hover:not(:disabled) {
+	background: var(--color-primary-hover);
+}
+
+/* ===========================
+   Secondary
+=========================== */
+
+.btn--secondary {
+	background: #e9f0fe;
+    /* #4df091; */
+	color: #2664ec;
+
+	border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover:not(:disabled) {
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+
+/* ===========================
+   Success
+=========================== */
+
+.btn--success {
+	background: var(--color-success);
+	color: white;
+}
+
+/* ===========================
+   Danger
+=========================== */
+
+.btn--danger {
+	background: var(--color-danger);
+	color: white;
+}
+
+/* ===========================
+   Warning
+=========================== */
+
+.btn--warning {
+	background: var(--color-warning);
+	color: white;
+}
+
+/* ===========================
+   Link Button
+=========================== */
+
+.btn--link {
+	padding: 0;
+
+	background: transparent;
+	color: var(--color-primary);
+
+	box-shadow: none;
+	border: none;
+}
+
+.btn--link:hover:not(:disabled) {
+	text-decoration: underline;
+	transform: none;
+	box-shadow: none;
+}
+
+/* ===========================
+   Sizes
+=========================== */
+
+.btn--sm {
+	padding: 0.5rem 0.9rem;
+	font-size: 0.875rem;
+}
+
+.btn--lg {
+	padding: 1rem 1.75rem;
+	font-size: 1rem;
+}
+
+/* ===========================
+   Full Width
+=========================== */
+
+.btn--block {
+	display: flex;
+	width: 100%;
+}
+
+/* ===========================
+   Button Groups
+=========================== */
+
+.btn-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+/* ===========================
+   Card Actions
+=========================== */
+
+.card__footer .btn {
+	min-width: 120px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 768px) {
+	.btn-group {
+		flex-direction: column;
+	}
+
+	.btn-group .btn {
+		width: 100%;
+	}
+
+	.card__footer .btn {
+		width: 100%;
+	}
+}

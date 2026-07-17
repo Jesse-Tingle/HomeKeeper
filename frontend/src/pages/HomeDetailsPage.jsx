@@ -119,82 +119,120 @@ export default function HomeDetailsPage() {
             <section>
                 <h2>Add Asset</h2>
 
-                {error && <p>{error}</p>}
+                {error && <p className="form__error">{error}</p>}
 
-                <form onSubmit={handleCreateAsset}>
-                    <div>
-                        <label htmlFor="asset-name">Asset Name</label>
-                        <input
-                            id="asset-name"
-                            name="name"
-                            type="text"
-                            value={assetForm.name}
-                            onChange={handleAssetChange}
-                            required
-                        />
+                <form className="form" onSubmit={handleCreateAsset}>
+                    <div className="form__row">
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-name">
+                                Asset Name
+                                <span className="form__required">*</span>
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-name"
+                                name="name"
+                                type="text"
+                                value={assetForm.name}
+                                onChange={handleAssetChange}
+                                placeholder="Water Heater"
+                                required
+                            />
+                        </div>
+
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-category">
+                                Category
+                                <span className="form__required">*</span>
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-category"
+                                name="category"
+                                type="text"
+                                value={assetForm.category}
+                                onChange={handleAssetChange}
+                                placeholder="Plumbing, HVAC, Appliance..."
+                                required
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label htmlFor="asset-category">Category</label>
-                        <input
-                            id="asset-category"
-                            name="category"
-                            type="text"
-                            value={assetForm.category}
-                            onChange={handleAssetChange}
-                            required
-                            placeholder="HVAC, Appliance, Roof..."
-                        />
+                    <div className="form__row">
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-manufacturer">
+                                Manufacturer
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-manufacturer"
+                                name="manufacturer"
+                                type="text"
+                                value={assetForm.manufacturer}
+                                onChange={handleAssetChange}
+                                placeholder="Rheem"
+                            />
+                        </div>
+
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-location">
+                                Location
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-location"
+                                name="location"
+                                type="text"
+                                value={assetForm.location}
+                                onChange={handleAssetChange}
+                                placeholder="Basement, Garage..."
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label htmlFor="asset-manufacturer">Manufacturer</label>
-                        <input
-                            id="asset-manufacturer"
-                            name="manufacturer"
-                            type="text"
-                            value={assetForm.manufacturer}
-                            onChange={handleAssetChange}
-                        />
+                    <div className="form__row">
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-model-number">
+                                Model Number
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-model-number"
+                                name="model_number"
+                                type="text"
+                                value={assetForm.model_number}
+                                onChange={handleAssetChange}
+                            />
+                        </div>
+
+                        <div className="form__group">
+                            <label className="form__label" htmlFor="asset-serial-number">
+                                Serial Number
+                            </label>
+
+                            <input
+                                className="form__input"
+                                id="asset-serial-number"
+                                name="serial_number"
+                                type="text"
+                                value={assetForm.serial_number}
+                                onChange={handleAssetChange}
+                            />
+                        </div>
                     </div>
 
-                    <div>
-                        <label htmlFor="asset-model-number">Model Number</label>
-                        <input
-                            id="asset-model-number"
-                            name="model_number"
-                            type="text"
-                            value={assetForm.model_number}
-                            onChange={handleAssetChange}
-                        />
-                    </div>
+                    <div className="form__group">
+                        <label className="form__label" htmlFor="asset-purchase-cost">
+                            Purchase Cost
+                        </label>
 
-                    <div>
-                        <label htmlFor="asset-serial-number">Serial Number</label>
                         <input
-                            id="asset-serial-number"
-                            name="serial_number"
-                            type="text"
-                            value={assetForm.serial_number}
-                            onChange={handleAssetChange}
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="asset-location">Location</label>
-                        <input
-                            id="asset-location"
-                            name="location"
-                            type="text"
-                            value={assetForm.location}
-                            onChange={handleAssetChange}
-                            placeholder="Basement, Garage..."
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="asset-purchase-cost">Purchase Cost</label>
-                        <input
+                            className="form__input"
                             id="asset-purchase-cost"
                             name="purchase_cost"
                             type="number"
@@ -202,12 +240,23 @@ export default function HomeDetailsPage() {
                             min="0"
                             value={assetForm.purchase_cost}
                             onChange={handleAssetChange}
+                            placeholder="899.99"
                         />
+
+                        <p className="form__help">
+                            Enter the original purchase price, if known.
+                        </p>
                     </div>
 
-                    <button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Adding..." : "Add Asset"}
-                    </button>
+                    <div className="form__actions">
+                        <button
+                            className="btn btn--primary"
+                            type="submit"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Adding..." : "Add Asset"}
+                        </button>
+                    </div>
                 </form>
             </section>
 

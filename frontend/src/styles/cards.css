@@ -1,0 +1,207 @@
+/* ===========================
+   Card Grid
+=========================== */
+
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+/* ===========================
+   Card
+=========================== */
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	background: var(--color-surface);
+
+	padding: 1.5rem;
+
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+
+	box-shadow: var(--shadow-sm);
+
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.card:hover {
+	transform: translateY(-3px);
+	box-shadow: var(--shadow-md);
+	border-color: var(--color-primary);
+}
+
+/* ===========================
+   Card Header
+=========================== */
+
+.card__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.card__title {
+	margin: 0;
+	font-size: 1.2rem;
+}
+
+.card__subtitle {
+	margin: 0.25rem 0 0;
+	color: var(--color-text-light);
+	font-size: 0.9rem;
+}
+
+/* ===========================
+   Card Body
+=========================== */
+
+.card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.card__row {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.card__label {
+	font-weight: 600;
+	color: var(--color-text);
+	min-width: 110px;
+}
+
+.card__value {
+	color: var(--color-text-light);
+	text-align: right;
+	word-break: break-word;
+}
+
+/* ===========================
+   Card Footer
+=========================== */
+
+.card__footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.75rem;
+
+	margin-top: auto;
+	padding-top: 1rem;
+
+	border-top: 1px solid var(--color-border);
+}
+
+/* ===========================
+   Status Badges
+=========================== */
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	padding: 0.3rem 0.75rem;
+
+	border-radius: 999px;
+
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.badge--primary {
+	background: rgba(37, 99, 235, 0.1);
+	color: var(--color-primary);
+}
+
+.badge--success {
+	background: rgba(22, 163, 74, 0.1);
+	color: var(--color-success);
+}
+
+.badge--warning {
+	background: rgba(217, 119, 6, 0.1);
+	color: var(--color-warning);
+}
+
+.badge--danger {
+	background: rgba(220, 38, 38, 0.1);
+	color: var(--color-danger);
+}
+
+/* ===========================
+   Card Actions
+=========================== */
+
+.card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.card__link {
+	font-weight: 600;
+}
+
+/* ===========================
+   Empty State
+=========================== */
+
+.empty-state {
+	padding: 3rem 2rem;
+
+	text-align: center;
+
+	background: var(--color-surface);
+
+	border: 2px dashed var(--color-border);
+	border-radius: var(--border-radius);
+}
+
+.empty-state h3 {
+	margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+	color: var(--color-text-light);
+	margin-bottom: 1.5rem;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 768px) {
+	.card-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.card__row {
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.card__label,
+	.card__value {
+		text-align: left;
+	}
+
+	.card__footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}

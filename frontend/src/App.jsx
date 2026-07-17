@@ -4,37 +4,26 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import HomeDetailsPage from "./pages/HomeDetailsPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AssetDetailsPage from "./pages/AssetDetailsPage";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./layouts/Layout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <Layout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/homes/:id"
-          element={
-            <ProtectedRoute>
-              <HomeDetailsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/assets/:id"
-          element={
-            <ProtectedRoute>
-              <AssetDetailsPage />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/homes/:id" element={<HomeDetailsPage />} />
+          <Route path="/assets/:id" element={<AssetDetailsPage />} />
+        </Route>
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

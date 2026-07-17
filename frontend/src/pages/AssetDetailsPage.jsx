@@ -152,7 +152,7 @@ export default function AssetDetailsPage() {
                         />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting}>
+                    <button type="submit" className="btn btn--secondary" disabled={isSubmitting}>
                         {isSubmitting ? "Adding..." : "Add Maintenance Event"}
                     </button>
                 </form>
