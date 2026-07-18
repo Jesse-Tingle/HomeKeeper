@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import AssetCard from "../components/assets/AssetCard";
+import HomeSummaryCard from "../components/homes/HomeSummaryCard";
 
 import apiClient from "../api/apiClient";
 
@@ -107,16 +108,10 @@ export default function HomeDetailsPage() {
         <main>
             <Link to="/">← Back to Dashboard</Link>
 
-            <section>
-                <h1>{home.name}</h1>
-
-                <p>
-                    {home.street_address}, {home.city}, {home.state}{" "}
-                    {home.postal_code}
-                </p>
-
-                <p>Type: {home.type || "Not specified"}</p>
-            </section>
+            <HomeSummaryCard
+                home={home}
+                editPath={`/homes/${home.id}/edit`}
+            />
 
             <section>
                 <h2>Add Asset</h2>

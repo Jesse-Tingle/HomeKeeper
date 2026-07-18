@@ -9,6 +9,7 @@ import "./styles/forms.css"
 import "./styles/global.css"
 import "./styles/layout.css"
 import "./styles/assets.css";
+import "./styles/home-summary.css";
 
 import { AuthProvider } from "./context/AuthContext";
 
