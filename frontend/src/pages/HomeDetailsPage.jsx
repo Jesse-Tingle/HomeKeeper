@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
+import AssetCard from "../components/assets/AssetCard";
+
 import apiClient from "../api/apiClient";
 
 export default function HomeDetailsPage() {
@@ -264,26 +266,16 @@ export default function HomeDetailsPage() {
                 <h2>Assets</h2>
 
                 {assets.length === 0 ? (
-                    <p>No assets have been added to this home yet.</p>
+                    <div className="empty-state">
+                        <h3>No assets added yet</h3>
+                        <p>Add an appliance, system, or other home asset to get started.</p>
+                    </div>
                 ) : (
-                    <ul>
+                    <div className="asset-grid">
                         {assets.map((asset) => (
-                            <li key={asset.id}>
-                                <h3>{asset.name}</h3>
-                                <p>Category: {asset.category}</p>
-                                <p>Location: {asset.location || "Not specified"}</p>
-                                <p>Manufacturer: {asset.manufacturer || "Not specified"}</p>
-                                <p>Model: {asset.model_number || "Not specified"}</p>
-                                <p>Serial: {asset.serial_number || "Not specified"}</p>
-                                <p>
-                                    Purchase Cost:{" "}
-                                    {asset.purchase_cost ? `$${asset.purchase_cost}` : "Not specified"}
-                                </p>
-
-                                <Link to={`/assets/${asset.id}`}>View Asset Details</Link>
-                            </li>
+                            <AssetCard key={asset.id} asset={asset} />
                         ))}
-                    </ul>
+                    </div>
                 )}
             </section>
         </main>
