@@ -30,9 +30,12 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const data = await login(formData.email, formData.password);
+            await login({
+                email: formData.email.trim(),
+                password: formData.password
+            });
 
-            navigate("/");
+            navigate("/dashboard");
         } catch (error) {
             setError(error.message);
         } finally {

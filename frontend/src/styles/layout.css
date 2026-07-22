@@ -141,7 +141,8 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	padding: 0.4rem;
+	padding: 1rem;
+    padding-left: 2rem;
 
 	font: inherit;
 	color: #172033;
@@ -197,7 +198,7 @@
 =========================== */
 
 .app-content {
-	padding: 0 2.5rem 3rem;
+	padding: 0 2.5rem 0rem;
 }
 
 .page-container {

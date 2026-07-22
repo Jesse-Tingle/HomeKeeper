@@ -16,7 +16,7 @@
 
 :root {
 	--color-primary: #2563eb;
-	--color-primary-hover: #1d4ed8;
+	--color-primary-hover: #e9f0ff;
 
 	--color-background: #f5f7fb;
 	--color-surface: #ffffff;
@@ -183,7 +183,7 @@ button:disabled {
 
 main {
 	max-width: 1200px;
-	margin: 2rem auto;
+	margin: 0 auto;
 	padding: 0 1.5rem;
 }
 

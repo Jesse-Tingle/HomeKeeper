@@ -169,32 +169,32 @@ export default function Layout() {
                         <span>Homes</span>
                     </Link>
 
-                    <Link
+                    {/* <Link
                         className="sidebar-nav__link"
                         to="/dashboard#recent-assets"
                     >
                         <ToolsIcon />
                         <span>Assets</span>
-                    </Link>
+                    </Link> */}
 
-                    <Link
+                    {/* <Link
                         className="sidebar-nav__link"
                         to="/dashboard#maintenance-history"
                     >
                         <CalendarIcon />
                         <span>Maintenance</span>
-                    </Link>
+                    </Link> */}
                 </nav>
 
                 <div className="sidebar-footer">
-                    <button
+                    {/* <button
                         className="sidebar-nav__link sidebar-nav__button"
                         type="button"
                         onClick={() => navigate("/settings")}
                     >
                         <SettingsIcon />
                         <span>Settings</span>
-                    </button>
+                    </button> */}
 
                     <button
                         className="sidebar-nav__link sidebar-nav__button"
