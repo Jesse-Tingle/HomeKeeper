@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 import AssetCard from "../components/assets/AssetCard";
 import HomeSummaryCard from "../components/homes/HomeSummaryCard";
+import "../styles/home-details.css";
 
 import apiClient from "../api/apiClient";
 
@@ -105,23 +106,75 @@ export default function HomeDetailsPage() {
     }
 
     return (
-        <main>
-            <Link to="/">← Back to Dashboard</Link>
+        <div className="home-details-page">
+            <Link
+                className="home-details-page__back"
+                to="/dashboard"
+            >
+                <span aria-hidden="true">←</span>
+                Back to Dashboard
+            </Link>
+
+            {error && (
+                <div className="home-details-page__error" role="alert">
+                    {error}
+                </div>
+            )}
 
             <HomeSummaryCard
                 home={home}
                 editPath={`/homes/${home.id}/edit`}
             />
 
-            <section>
-                <h2>Add Asset</h2>
+            <section
+                className="home-page-card home-page-card--form"
+                aria-labelledby="add-asset-title"
+            >
+                <div className="home-page-card__header">
+                    <div>
+                        <p className="home-page-card__eyebrow">
+                            New asset
+                        </p>
 
-                {error && <p className="form__error">{error}</p>}
+                        <h2 id="add-asset-title">Add Asset</h2>
 
-                <form className="form" onSubmit={handleCreateAsset}>
+                        <p className="home-page-card__description">
+                            Add an appliance, system, or other important item
+                            associated with this home.
+                        </p>
+                    </div>
+
+                    <div
+                        className="home-page-card__header-icon"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.5 5.5l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a4.2 4.2 0 0 1 5.5-5.5l-3 3" />
+                            <path d="m15 15 6 6" />
+                            <path d="m17 13 4 4" />
+                        </svg>
+                    </div>
+                </div>
+
+                <form
+                    className="form home-asset-form"
+                    onSubmit={handleCreateAsset}
+                >
                     <div className="form__row">
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-name">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-name"
+                            >
                                 Asset Name
                                 <span className="form__required">*</span>
                             </label>
@@ -139,7 +192,10 @@ export default function HomeDetailsPage() {
                         </div>
 
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-category">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-category"
+                            >
                                 Category
                                 <span className="form__required">*</span>
                             </label>
@@ -159,7 +215,10 @@ export default function HomeDetailsPage() {
 
                     <div className="form__row">
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-manufacturer">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-manufacturer"
+                            >
                                 Manufacturer
                             </label>
 
@@ -175,7 +234,10 @@ export default function HomeDetailsPage() {
                         </div>
 
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-location">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-location"
+                            >
                                 Location
                             </label>
 
@@ -193,7 +255,10 @@ export default function HomeDetailsPage() {
 
                     <div className="form__row">
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-model-number">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-model-number"
+                            >
                                 Model Number
                             </label>
 
@@ -204,11 +269,15 @@ export default function HomeDetailsPage() {
                                 type="text"
                                 value={assetForm.model_number}
                                 onChange={handleAssetChange}
+                                placeholder="Model number"
                             />
                         </div>
 
                         <div className="form__group">
-                            <label className="form__label" htmlFor="asset-serial-number">
+                            <label
+                                className="form__label"
+                                htmlFor="asset-serial-number"
+                            >
                                 Serial Number
                             </label>
 
@@ -219,60 +288,114 @@ export default function HomeDetailsPage() {
                                 type="text"
                                 value={assetForm.serial_number}
                                 onChange={handleAssetChange}
+                                placeholder="Serial number"
                             />
                         </div>
                     </div>
 
                     <div className="form__group">
-                        <label className="form__label" htmlFor="asset-purchase-cost">
+                        <label
+                            className="form__label"
+                            htmlFor="asset-purchase-cost"
+                        >
                             Purchase Cost
                         </label>
 
-                        <input
-                            className="form__input"
-                            id="asset-purchase-cost"
-                            name="purchase_cost"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={assetForm.purchase_cost}
-                            onChange={handleAssetChange}
-                            placeholder="899.99"
-                        />
+                        <div className="home-asset-form__cost">
+                            <span aria-hidden="true">$</span>
+
+                            <input
+                                className="form__input"
+                                id="asset-purchase-cost"
+                                name="purchase_cost"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={assetForm.purchase_cost}
+                                onChange={handleAssetChange}
+                                placeholder="899.99"
+                            />
+                        </div>
 
                         <p className="form__help">
                             Enter the original purchase price, if known.
                         </p>
                     </div>
 
-                    <div className="form__actions">
+                    <div className="form__actions home-asset-form__actions">
                         <button
                             className="btn btn--primary"
                             type="submit"
                             disabled={isSubmitting}
                         >
-                            {isSubmitting ? "Adding..." : "Add Asset"}
+                            {isSubmitting ? "Adding Asset..." : "Add Asset"}
                         </button>
                     </div>
                 </form>
             </section>
 
-            <section>
-                <h2>Assets</h2>
+            <section
+                className="home-page-card home-page-card--assets"
+                aria-labelledby="assets-title"
+            >
+                <div className="home-page-card__header">
+                    <div>
+                        <p className="home-page-card__eyebrow">
+                            Home inventory
+                        </p>
+
+                        <h2 id="assets-title">Assets</h2>
+
+                        <p className="home-page-card__description">
+                            View and manage the appliances, systems, and other
+                            items associated with this home.
+                        </p>
+                    </div>
+
+                    <span className="home-page-card__count">
+                        {assets.length}
+                    </span>
+                </div>
 
                 {assets.length === 0 ? (
-                    <div className="empty-state">
+                    <div className="home-assets-empty">
+                        <div
+                            className="home-assets-empty__icon"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                width="28"
+                                height="28"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.5 5.5l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a4.2 4.2 0 0 1 5.5-5.5l-3 3" />
+                                <path d="m15 15 6 6" />
+                            </svg>
+                        </div>
+
                         <h3>No assets added yet</h3>
-                        <p>Add an appliance, system, or other home asset to get started.</p>
+
+                        <p>
+                            Use the form above to add the first asset for this
+                            home.
+                        </p>
                     </div>
                 ) : (
                     <div className="asset-grid">
                         {assets.map((asset) => (
-                            <AssetCard key={asset.id} asset={asset} />
+                            <AssetCard
+                                key={asset.id}
+                                asset={asset}
+                            />
                         ))}
                     </div>
                 )}
             </section>
-        </main>
+        </div>
     );
 }

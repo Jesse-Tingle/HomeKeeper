@@ -1,311 +1,434 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
 import apiClient from "../api/apiClient";
+import "../styles/dashboard.css";
+
+function HomeIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M3 11.5 12 4l9 7.5" />
+            <path d="M5.5 10.5V20h13v-9.5" />
+            <path d="M9.5 20v-6h5v6" />
+        </svg>
+    );
+}
+
+function ToolsIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.5 5.5l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a4.2 4.2 0 0 1 5.5-5.5l-3 3" />
+            <path d="m15 15 6 6" />
+            <path d="m17 13 4 4" />
+        </svg>
+    );
+}
+
+function CalendarIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <rect x="3" y="5" width="18" height="16" rx="2" />
+            <path d="M16 3v4M8 3v4M3 10h18" />
+            <path d="M8 14h.01M12 14h.01M16 14h.01" />
+        </svg>
+    );
+}
+
+function DollarIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M16 8.5c-.8-1-2-1.5-3.5-1.5-2 0-3.5 1-3.5 2.5s1.3 2.2 3.5 2.7c2.2.5 3.5 1.2 3.5 2.8s-1.5 2.7-3.8 2.7c-1.7 0-3.1-.6-4.2-1.7" />
+            <path d="M12 5v14" />
+        </svg>
+    );
+}
+
+function ChevronIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m9 18 6-6-6-6" />
+        </svg>
+    );
+}
+
+function getResponseData(response) {
+    return response?.data ?? response ?? [];
+}
+
+function formatCurrency(value) {
+    return Number(value || 0).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+    });
+}
+
+function getAssetSymbol(asset) {
+    const category = asset?.category?.toLowerCase() || "";
+    const name = asset?.name?.toLowerCase() || "";
+
+    if (
+        category.includes("hvac") ||
+        name.includes("air conditioner") ||
+        name.includes("ac")
+    ) {
+        return "❄";
+    }
+
+    if (
+        category.includes("plumb") ||
+        name.includes("water") ||
+        name.includes("heater")
+    ) {
+        return "◊";
+    }
+
+    if (
+        category.includes("appliance") ||
+        name.includes("dishwasher") ||
+        name.includes("oven")
+    ) {
+        return "▦";
+    }
+
+    return "⌂";
+}
 
 export default function DashboardPage() {
     const [homes, setHomes] = useState([]);
-    const [error, setError] = useState("");
+    const [assets, setAssets] = useState([]);
+    const [maintenanceEvents, setMaintenanceEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const [homeForm, setHomeForm] = useState({
-        name: "",
-        street_address: "",
-        city: "",
-        state: "",
-        postal_code: "",
-        country: "USA",
-        type: ""
-    });
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchHomes = async () => {
+        let isMounted = true;
+
+        const loadDashboard = async () => {
             try {
-                const data = await apiClient.get("/homes");
-                setHomes(data);
-            } catch (error) {
-                setError(error.message);
+                setIsLoading(true);
+                setError("");
+
+                const homesResponse = await apiClient.get("/homes");
+                const homesData = getResponseData(homesResponse);
+
+                const assetResponses = await Promise.all(
+                    homesData.map(async (home) => {
+                        const response = await apiClient.get(
+                            `/homes/${home.id}/assets`,
+                        );
+
+                        return getResponseData(response).map((asset) => ({
+                            ...asset,
+                            home_id: asset.home_id || home.id,
+                            home_name: home.name,
+                        }));
+                    }),
+                );
+
+                const allAssets = assetResponses.flat();
+
+                const maintenanceResponses = await Promise.all(
+                    allAssets.map(async (asset) => {
+                        const response = await apiClient.get(
+                            `/assets/${asset.id}/maintenance-events`,
+                        );
+
+                        return getResponseData(response).map((event) => ({
+                            ...event,
+                            asset_name: asset.name,
+                            asset_id: asset.id,
+                        }));
+                    }),
+                );
+
+                if (!isMounted) {
+                    return;
+                }
+
+                setHomes(homesData);
+                setAssets(allAssets);
+                setMaintenanceEvents(maintenanceResponses.flat());
+            } catch (requestError) {
+                console.error("Unable to load dashboard:", requestError);
+
+                if (isMounted) {
+                    setError(
+                        requestError.message ||
+                        "Unable to load your dashboard.",
+                    );
+                }
             } finally {
-                setIsLoading(false);
+                if (isMounted) {
+                    setIsLoading(false);
+                }
             }
         };
 
-        fetchHomes();
+        loadDashboard();
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    const handleHomeChange = (event) => {
-        const { name, value } = event.target;
+    const totalAssetValue = useMemo(
+        () =>
+            assets.reduce(
+                (total, asset) =>
+                    total + Number(asset.purchase_cost || 0),
+                0,
+            ),
+        [assets],
+    );
 
-        setHomeForm((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
+    const recentAssets = useMemo(
+        () =>
+            [...assets]
+                .sort((first, second) => {
+                    const firstDate = new Date(
+                        first.created_at || first.install_date || 0,
+                    );
 
-    const handleCreateHome = async (event) => {
-        event.preventDefault();
+                    const secondDate = new Date(
+                        second.created_at || second.install_date || 0,
+                    );
 
-        setError("");
-        setIsSubmitting(true);
+                    return secondDate - firstDate;
+                })
+                .slice(0, 3),
+        [assets],
+    );
 
-        try {
-            const payload = {
-                name: homeForm.name,
-                street_address: homeForm.street_address,
-                city: homeForm.city,
-                state: homeForm.state,
-                postal_code: homeForm.postal_code,
-                country: homeForm.country || undefined,
-                type: homeForm.type || undefined
-            };
+    const recentMaintenance = useMemo(
+        () =>
+            [...maintenanceEvents]
+                .sort(
+                    (first, second) =>
+                        new Date(second.event_date || second.created_at || 0) -
+                        new Date(first.event_date || first.created_at || 0),
+                )
+                .slice(0, 3),
+        [maintenanceEvents],
+    );
 
-            const newHome = await apiClient.post("/homes", payload);
-
-            setHomes((prevHomes) => [newHome, ...prevHomes]);
-
-            setHomeForm({
-                name: "",
-                street_address: "",
-                city: "",
-                state: "",
-                postal_code: "",
-                country: "USA",
-                type: ""
-            });
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    if (isLoading) {
+        return (
+            <div className="dashboard-page">
+                <div className="dashboard-loading">
+                    <div className="dashboard-loading__spinner" />
+                    <p>Loading your home summary...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <main>
-            <h1>Dashboard</h1>
+        <div className="dashboard-page">
+            <div className="dashboard-heading">
+                <div>
+                    <p className="dashboard-heading__eyebrow">Overview</p>
+                    <h1>Dashboard</h1>
+                </div>
 
-            <section>
-                <h2>Create Home</h2>
+                <p className="dashboard-heading__summary">Home summary</p>
+            </div>
 
-                <form className="form" onSubmit={handleCreateHome}>
-                    <div className="form__row">
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="name">
-                                Home Name
-                                <span className="form__required">*</span>
-                            </label>
+            {error && (
+                <div className="dashboard-error" role="alert">
+                    {error}
+                </div>
+            )}
 
-                            <input
-                                className="form__input"
-                                id="name"
-                                name="name"
-                                type="text"
-                                value={homeForm.name}
-                                onChange={handleHomeChange}
-                                placeholder="Main Home"
-                                required
-                            />
-                        </div>
-
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="type">
-                                Home Type
-                            </label>
-
-                            <input
-                                className="form__input"
-                                id="type"
-                                name="type"
-                                type="text"
-                                value={homeForm.type}
-                                onChange={handleHomeChange}
-                                placeholder="Primary, Vacation, Rental..."
-                            />
-                        </div>
+            <section
+                className="dashboard-stats"
+                id="homes"
+                aria-label="Home summary statistics"
+            >
+                <article className="dashboard-stat dashboard-stat--homes">
+                    <div className="dashboard-stat__icon">
+                        <HomeIcon />
                     </div>
 
-                    <div className="form__group">
-                        <label className="form__label" htmlFor="street_address">
-                            Street Address
-                            <span className="form__required">*</span>
-                        </label>
+                    <div>
+                        <span>Homes</span>
+                        <strong>{homes.length}</strong>
+                    </div>
+                </article>
 
-                        <input
-                            className="form__input"
-                            id="street_address"
-                            name="street_address"
-                            type="text"
-                            value={homeForm.street_address}
-                            onChange={handleHomeChange}
-                            placeholder="123 Main Street"
-                            autoComplete="street-address"
-                            required
-                        />
+                <article className="dashboard-stat dashboard-stat--assets">
+                    <div className="dashboard-stat__icon">
+                        <ToolsIcon />
                     </div>
 
-                    <div className="form__row">
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="city">
-                                City
-                                <span className="form__required">*</span>
-                            </label>
+                    <div>
+                        <span>Assets</span>
+                        <strong>{assets.length}</strong>
+                    </div>
+                </article>
 
-                            <input
-                                className="form__input"
-                                id="city"
-                                name="city"
-                                type="text"
-                                value={homeForm.city}
-                                onChange={handleHomeChange}
-                                autoComplete="address-level2"
-                                required
-                            />
-                        </div>
-
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="state">
-                                State
-                                <span className="form__required">*</span>
-                            </label>
-
-                            <input
-                                className="form__input"
-                                id="state"
-                                name="state"
-                                type="text"
-                                value={homeForm.state}
-                                onChange={handleHomeChange}
-                                placeholder="IN"
-                                autoComplete="address-level1"
-                                required
-                            />
-                        </div>
+                <article className="dashboard-stat dashboard-stat--maintenance">
+                    <div className="dashboard-stat__icon">
+                        <CalendarIcon />
                     </div>
 
-                    <div className="form__row">
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="postal_code">
-                                Postal Code
-                                <span className="form__required">*</span>
-                            </label>
+                    <div>
+                        <span>Maintenance</span>
+                        <strong>{maintenanceEvents.length}</strong>
+                    </div>
+                </article>
 
-                            <input
-                                className="form__input"
-                                id="postal_code"
-                                name="postal_code"
-                                type="text"
-                                value={homeForm.postal_code}
-                                onChange={handleHomeChange}
-                                autoComplete="postal-code"
-                                required
-                            />
-                        </div>
-
-                        <div className="form__group">
-                            <label className="form__label" htmlFor="country">
-                                Country
-                            </label>
-
-                            <input
-                                className="form__input"
-                                id="country"
-                                name="country"
-                                type="text"
-                                value={homeForm.country}
-                                onChange={handleHomeChange}
-                                autoComplete="country-name"
-                            />
-                        </div>
+                <article className="dashboard-stat dashboard-stat--value">
+                    <div className="dashboard-stat__icon">
+                        <DollarIcon />
                     </div>
 
-                    <div className="form__actions">
-                        <button
-                            className="btn btn--primary"
-                            type="submit"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? "Creating..." : "Create Home"}
-                        </button>
+                    <div>
+                        <span>Total Value</span>
+                        <strong>{formatCurrency(totalAssetValue)}</strong>
                     </div>
-                </form>
+                </article>
             </section>
 
-            <section>
-                <h2>My Homes</h2>
+            <div className="dashboard-panels">
+                <section
+                    className="dashboard-panel"
+                    id="recent-assets"
+                    aria-labelledby="recent-assets-title"
+                >
+                    <div className="dashboard-panel__header">
+                        <h2 id="recent-assets-title">Recent Assets</h2>
 
-                {isLoading && <p>Loading homes...</p>}
-
-                {error && <p>{error}</p>}
-
-                {!isLoading && !error && homes.length === 0 && (
-                    <div className="empty-state">
-                        <h3>No homes yet</h3>
-
-                        <p>
-                            Create your first home to start tracking assets and maintenance.
-                        </p>
+                        {assets.length > 3 && (
+                            <a href="#homes">View all</a>
+                        )}
                     </div>
-                )}
 
-                {homes.length > 0 && (
-                    <div className="card-grid">
-                        {homes.map((home) => (
-                            <article className="card" key={home.id}>
-                                <div className="card__header">
-                                    <div>
-                                        <h3 className="card__title">{home.name}</h3>
+                    {recentAssets.length === 0 ? (
+                        <div className="dashboard-panel__empty">
+                            <p>No assets have been added yet.</p>
+                            <p>Add an asset from one of your home pages.</p>
+                        </div>
+                    ) : (
+                        <div className="dashboard-list">
+                            {recentAssets.map((asset) => (
+                                <Link
+                                    className="dashboard-list__item"
+                                    key={asset.id}
+                                    to={`/assets/${asset.id}`}
+                                >
+                                    <span className="dashboard-list__icon">
+                                        {getAssetSymbol(asset)}
+                                    </span>
 
-                                        <p className="card__subtitle">
-                                            {home.street_address}
-                                        </p>
-                                    </div>
+                                    <span className="dashboard-list__content">
+                                        <strong>{asset.name}</strong>
 
-                                    {home.role && (
-                                        <span className="badge badge--primary">
-                                            {home.role}
+                                        <span>
+                                            {asset.location ||
+                                                asset.home_name ||
+                                                "Location not specified"}
                                         </span>
-                                    )}
-                                </div>
+                                    </span>
 
-                                <div className="card__body">
-                                    <div className="card__row">
-                                        <span className="card__label">Location</span>
+                                    <span className="dashboard-list__chevron">
+                                        <ChevronIcon />
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </section>
 
-                                        <span className="card__value">
-                                            {home.city}, {home.state} {home.postal_code}
-                                        </span>
-                                    </div>
+                <section
+                    className="dashboard-panel"
+                    id="maintenance-history"
+                    aria-labelledby="maintenance-history-title"
+                >
+                    <div className="dashboard-panel__header">
+                        <h2 id="maintenance-history-title">
+                            Maintenance History
+                        </h2>
 
-                                    <div className="card__row">
-                                        <span className="card__label">Country</span>
-
-                                        <span className="card__value">
-                                            {home.country || "Not specified"}
-                                        </span>
-                                    </div>
-
-                                    <div className="card__row">
-                                        <span className="card__label">Type</span>
-
-                                        <span className="card__value">
-                                            {home.type || "Not specified"}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div className="card__footer">
-                                    <Link
-                                        className="card__link"
-                                        to={`/homes/${home.id}`}
-                                    >
-                                        View Details
-                                    </Link>
-                                </div>
-                            </article>
-                        ))}
+                        {maintenanceEvents.length > 3 && (
+                            <a href="#maintenance-history">View all</a>
+                        )}
                     </div>
-                )}
-            </section>
-        </main>
+
+                    {recentMaintenance.length === 0 ? (
+                        <div className="dashboard-panel__empty">
+                            <p>No maintenance events recorded yet.</p>
+                            <p>
+                                Open an asset to add its first maintenance
+                                record.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="dashboard-list">
+                            {recentMaintenance.map((event) => (
+                                <Link
+                                    className="dashboard-list__item"
+                                    key={event.id}
+                                    to={`/assets/${event.asset_id}`}
+                                >
+                                    <span className="dashboard-list__icon">
+                                        <CalendarIcon />
+                                    </span>
+
+                                    <span className="dashboard-list__content">
+                                        <strong>{event.event_type}</strong>
+                                        <span>{event.asset_name}</span>
+                                    </span>
+
+                                    <span className="dashboard-list__status">
+                                        Complete
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
+        </div>
     );
 }
