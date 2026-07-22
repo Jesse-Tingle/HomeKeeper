@@ -1,0 +1,128 @@
+/* ===========================
+   Asset Grid
+=========================== */
+
+.asset-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1.5rem;
+}
+
+/* ===========================
+   Asset Card
+=========================== */
+
+.asset-card {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	padding: 1.5rem;
+
+	background-color: var(--color-surface, #ffffff);
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	box-shadow: var(--shadow-sm);
+
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.asset-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-md);
+}
+
+.asset-card__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-bottom: 1rem;
+
+	border-bottom: 1px solid var(--color-border);
+}
+
+.asset-card__title {
+	margin: 0;
+
+	font-size: 1.15rem;
+	font-weight: 750;
+	line-height: 1.3;
+	color: #172033;
+}
+
+.asset-card__location {
+	margin: 0.35rem 0 0;
+
+	font-size: 0.9rem;
+	color: var(--color-text-light);
+}
+
+/* ===========================
+   Asset Details
+=========================== */
+
+.asset-card__details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.8rem;
+	margin: 1.25rem 0;
+}
+
+.asset-card__detail {
+	display: grid;
+	grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.2fr);
+	gap: 1rem;
+	align-items: start;
+}
+
+.asset-card__detail dt {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--color-text-light);
+}
+
+.asset-card__detail dd {
+	min-width: 0;
+	margin: 0;
+
+	color: var(--color-text);
+	overflow-wrap: anywhere;
+}
+
+/* ===========================
+   Asset Footer
+=========================== */
+
+.asset-card__footer {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: auto;
+	padding-top: 1rem;
+
+	border-top: 1px solid var(--color-border);
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 480px) {
+	.asset-card {
+		padding: 1.25rem;
+	}
+
+	.asset-card__header {
+		flex-direction: column;
+	}
+
+	.asset-card__detail {
+		grid-template-columns: 1fr;
+		gap: 0.2rem;
+	}
+
+	.asset-card__footer .btn {
+		width: 100%;
+	}
+}
