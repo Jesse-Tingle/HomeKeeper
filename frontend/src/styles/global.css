@@ -183,7 +183,7 @@ button:disabled {
 
 main {
 	max-width: 1200px;
-	margin: 2rem auto;
+	margin: 0 auto;
 	padding: 0 1.5rem;
 }
 
