@@ -205,6 +205,133 @@
 }
 
 /* ===========================
+   Collapsible Asset Form
+=========================== */
+
+.home-page-card--form {
+	padding: 0;
+	overflow: hidden;
+}
+
+.home-page-card__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2rem;
+	width: 100%;
+	padding: 1.75rem 2rem;
+
+	font: inherit;
+	text-align: left;
+	color: inherit;
+
+	background: transparent;
+	border: 0;
+	cursor: pointer;
+}
+
+.home-page-card__toggle:hover {
+	background: #e9f0ff;
+}
+
+.home-page-card__toggle:focus-visible {
+	outline: 3px solid rgba(37, 99, 235, 0.2);
+	outline-offset: -3px;
+}
+
+.home-page-card__toggle-content {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	min-width: 0;
+}
+
+.home-page-card__toggle-content .home-page-card__header-icon {
+	order: 0;
+}
+
+.home-page-card__toggle-content h2 {
+	margin: 0;
+
+	font-size: 1.45rem;
+	letter-spacing: -0.02em;
+	color: #172033;
+}
+
+.home-page-card__toggle-action {
+	display: inline-flex;
+	flex: 0 0 auto;
+	align-items: center;
+	gap: 0.65rem;
+
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: #2563eb;
+}
+
+.home-page-card__toggle-action svg {
+	width: 1.2rem;
+	height: 1.2rem;
+
+	transition: transform 0.2s ease;
+}
+
+.home-page-card--open .home-page-card__toggle-action svg {
+	transform: rotate(180deg);
+}
+
+.home-page-card__collapsible {
+	padding: 0 2rem 2rem;
+
+	border-top: 1px solid #e9eef5;
+
+	animation: asset-form-open 0.2s ease-out;
+}
+
+.home-page-card__collapsible .home-asset-form {
+	padding-top: 1.75rem;
+}
+
+@keyframes asset-form-open {
+	from {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (max-width: 700px) {
+	.home-page-card__toggle {
+		align-items: flex-start;
+		padding: 1.35rem;
+	}
+
+	.home-page-card__toggle-action span {
+		display: none;
+	}
+
+	.home-page-card__collapsible {
+		padding: 0 1.35rem 1.35rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.home-page-card__toggle-content {
+		align-items: flex-start;
+	}
+
+	.home-page-card__toggle-content .home-page-card__header-icon {
+		display: grid;
+		width: 2.75rem;
+		height: 2.75rem;
+	}
+}
+
+/* ===========================
    Empty Assets State
 =========================== */
 
