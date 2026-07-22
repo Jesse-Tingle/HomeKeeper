@@ -1,0 +1,136 @@
+.add-home-page {
+	width: 100%;
+	max-width: 920px;
+	margin: 0 auto;
+}
+
+.add-home-page__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	margin-bottom: 1.25rem;
+
+	font-size: 0.9rem;
+	font-weight: 650;
+	text-decoration: none;
+	color: #2563eb;
+}
+
+.add-home-page__back:hover {
+	color: #1d4ed8;
+}
+
+.add-home-page__error {
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.5rem;
+
+	color: #b42318;
+	background: #fff1f0;
+	border: 1px solid #fecaca;
+	border-radius: 0.85rem;
+}
+
+.add-home-card {
+	padding: 2rem;
+
+	background: #ffffff;
+	border: 1px solid #e3e9f2;
+	border-radius: 1rem;
+	box-shadow: 0 8px 22px rgba(35, 55, 89, 0.05);
+}
+
+.add-home-card__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 2rem;
+	padding-bottom: 1.5rem;
+	margin-bottom: 1.75rem;
+
+	border-bottom: 1px solid #e9eef5;
+}
+
+.add-home-card__eyebrow {
+	margin: 0 0 0.4rem;
+
+	font-size: 0.75rem;
+	font-weight: 750;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #94a3b8;
+}
+
+.add-home-card h1 {
+	margin: 0;
+
+	font-size: clamp(2rem, 4vw, 2.75rem);
+	letter-spacing: -0.04em;
+	color: #142033;
+}
+
+.add-home-card__header p:last-child {
+	max-width: 600px;
+	margin: 0.75rem 0 0;
+
+	line-height: 1.65;
+	color: #71819a;
+}
+
+.add-home-card__icon {
+	display: grid;
+	flex: 0 0 auto;
+	width: 4rem;
+	height: 4rem;
+	place-items: center;
+
+	color: #2563eb;
+	background: #eaf1ff;
+	border-radius: 50%;
+}
+
+.add-home-card__icon svg {
+	width: 2rem;
+	height: 2rem;
+}
+
+.add-home-form {
+	gap: 1.35rem;
+}
+
+.add-home-form .form__input,
+.add-home-form .form__select {
+	min-height: 48px;
+
+	background: #fbfcff;
+	border-color: #dce4ef;
+}
+
+.add-home-form__actions {
+	justify-content: flex-end;
+	padding-top: 1.25rem;
+	margin-top: 0.5rem;
+
+	border-top: 1px solid #edf1f6;
+}
+
+@media (max-width: 650px) {
+	.add-home-card {
+		padding: 1.35rem;
+	}
+
+	.add-home-card__header {
+		flex-direction: column;
+	}
+
+	.add-home-card__icon {
+		display: none;
+	}
+
+	.add-home-form__actions {
+		flex-direction: column-reverse;
+	}
+
+	.add-home-form__actions .btn {
+		width: 100%;
+	}
+}

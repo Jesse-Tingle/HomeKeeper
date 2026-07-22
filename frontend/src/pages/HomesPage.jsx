@@ -137,7 +137,7 @@ export default function HomesPage() {
 
                 <Link
                     className="btn btn--primary"
-                    to="/dashboard"
+                    to="/homes/new"
                 >
                     Add Home
                 </Link>
@@ -162,7 +162,7 @@ export default function HomesPage() {
                         repairs, and maintenance history.
                     </p>
 
-                    <Link className="btn btn--primary" to="/dashboard">
+                    <Link className="btn btn--primary" to="/homes/new">
                         Add Your First Home
                     </Link>
                 </section>

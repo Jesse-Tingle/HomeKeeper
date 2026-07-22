@@ -10,6 +10,7 @@ import AssetDetailsPage from "./pages/AssetDetailsPage";
 import Layout from "./layouts/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import HomesPage from "./pages/HomesPage";
+import AddHomePage from "./pages/AddHomePage";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/homes" element={<HomesPage />} />
+          <Route path="/homes/new" element={<AddHomePage />} />
           <Route path="/homes/:id" element={<HomeDetailsPage />} />
           <Route path="/assets/:id" element={<AssetDetailsPage />} />
         </Route>
