@@ -205,9 +205,8 @@ docs/
     └── authentication.png
 ```
 
-```markdown
+
 ![Dashboard screenshot](./docs/images/dashboard.png)
-```
 
 ### Live Demo
 
