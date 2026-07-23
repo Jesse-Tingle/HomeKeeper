@@ -206,7 +206,7 @@ docs/
 ```
 
 ```markdown
-![HomeKeeper dashboard](./docs/images/dashboard.png)
+![Dashboard screenshot](./docs/images/dashboard.png)
 ```
 
 ### Live Demo
