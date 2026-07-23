@@ -5,6 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const assetRoutes = require("./routes/assetRoutes");
 const authRoutes = require("./routes/authRoutes");
+const healthRoutes = require("./routes/healthRoutes");
 
 const pool = require("./config/database");
 
@@ -30,6 +31,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/homes", homeRoutes);
 app.use("/assets", assetRoutes);
+app.use("/health", healthRoutes);
 
 const PORT = process.env.PORT || 5000;
 
