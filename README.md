@@ -2,6 +2,8 @@
 
 # HomeKeeper
 
+![Landing Page Screenshot](./docs/images/landing-page.png)
+
 ### A full-stack home maintenance management platform for organizing properties, tracking household assets, and preserving maintenance history.
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
@@ -203,11 +205,8 @@ docs/
     └── authentication.png
 ```
 
-Then replace this section with:
 
-```markdown
-![HomeKeeper dashboard](./docs/images/dashboard.png)
-```
+![Dashboard screenshot](./docs/images/dashboard.png)
 
 ### Live Demo
 
