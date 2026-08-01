@@ -4,35 +4,219 @@ import { Link, useParams } from "react-router-dom";
 import apiClient from "../api/apiClient";
 import "../styles/asset-details.css";
 
+const EMPTY_EVENT_FORM = {
+    event_type: "inspection",
+    event_date: "",
+    cost: "",
+    notes: "",
+};
+
+function formatCurrency(value) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "Not specified";
+    }
+
+    const numericValue = Number(value);
+
+    if (Number.isNaN(numericValue)) {
+        return "Not specified";
+    }
+
+    return numericValue.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+    });
+}
+
+function formatEventDate(value) {
+    if (!value) {
+        return "Date not specified";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return "Date not specified";
+    }
+
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+}
+
+function PencilIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+        </svg>
+    );
+}
+
+function ToolIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.5 5.5l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a4.2 4.2 0 0 1 5.5-5.5l-3 3" />
+            <path d="m15 15 6 6" />
+            <path d="m17 13 4 4" />
+        </svg>
+    );
+}
+
+function LocationIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+
+            <circle
+                cx="12"
+                cy="10"
+                r="2.5"
+            />
+        </svg>
+    );
+}
+
+function CalendarAddIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <rect
+                x="3"
+                y="5"
+                width="18"
+                height="16"
+                rx="2"
+            />
+
+            <path d="M16 3v4M8 3v4M3 10h18" />
+            <path d="M12 14v4M10 16h4" />
+        </svg>
+    );
+}
+
+function CalendarIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <rect
+                x="3"
+                y="5"
+                width="18"
+                height="16"
+                rx="2"
+            />
+
+            <path d="M16 3v4M8 3v4M3 10h18" />
+            <path d="M8 15h8" />
+        </svg>
+    );
+}
+
+function TrashIcon() {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M19 6 18 20H6L5 6" />
+            <path d="M10 11v5" />
+            <path d="M14 11v5" />
+        </svg>
+    );
+}
+
 export default function AssetDetailsPage() {
     const { id } = useParams();
 
     const [asset, setAsset] = useState(null);
     const [home, setHome] = useState(null);
     const [events, setEvents] = useState([]);
+
+    const [eventForm, setEventForm] = useState(
+        EMPTY_EVENT_FORM,
+    );
+
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting, setIsSubmitting] =
+        useState(false);
 
-    const [eventForm, setEventForm] = useState({
-        event_type: "inspection",
-        event_date: "",
-        cost: "",
-        notes: "",
-    });
+    /*
+     * This stores the ID of the maintenance event currently
+     * being deleted. It lets us disable only that event's
+     * button and display its individual loading state.
+     */
+    const [deletingEventId, setDeletingEventId] =
+        useState(null);
 
     useEffect(() => {
         let isMounted = true;
 
-        const fetchAssetDetails = async () => {
+        const loadAssetDetails = async () => {
             try {
                 setIsLoading(true);
                 setError("");
 
-                const assetData = await apiClient.get(`/assets/${id}`);
+                const assetData = await apiClient.get(
+                    `/assets/${id}`,
+                );
 
                 if (!assetData) {
-                    throw new Error("Asset data was not returned.");
+                    throw new Error(
+                        "Asset data was not returned.",
+                    );
                 }
 
                 const eventData = await apiClient.get(
@@ -52,8 +236,13 @@ export default function AssetDetailsPage() {
                 }
 
                 setAsset(assetData);
-                setEvents(Array.isArray(eventData) ? eventData : []);
                 setHome(homeData);
+
+                setEvents(
+                    Array.isArray(eventData)
+                        ? eventData
+                        : [],
+                );
             } catch (requestError) {
                 console.error(
                     "Unable to load asset details:",
@@ -73,7 +262,7 @@ export default function AssetDetailsPage() {
             }
         };
 
-        fetchAssetDetails();
+        loadAssetDetails();
 
         return () => {
             isMounted = false;
@@ -100,10 +289,12 @@ export default function AssetDetailsPage() {
                 asset_id: id,
                 event_type: eventForm.event_type,
                 event_date: eventForm.event_date,
-                cost: eventForm.cost
-                    ? Number(eventForm.cost)
-                    : undefined,
-                notes: eventForm.notes || undefined,
+                cost:
+                    eventForm.cost === ""
+                        ? undefined
+                        : Number(eventForm.cost),
+                notes:
+                    eventForm.notes.trim() || undefined,
             };
 
             const newEvent = await apiClient.post(
@@ -116,12 +307,7 @@ export default function AssetDetailsPage() {
                 ...previousEvents,
             ]);
 
-            setEventForm({
-                event_type: "inspection",
-                event_date: "",
-                cost: "",
-                notes: "",
-            });
+            setEventForm(EMPTY_EVENT_FORM);
         } catch (requestError) {
             console.error(
                 "Unable to create maintenance event:",
@@ -137,6 +323,62 @@ export default function AssetDetailsPage() {
         }
     };
 
+    const handleDeleteEvent = async (
+        maintenanceEvent,
+    ) => {
+        if (
+            !maintenanceEvent ||
+            !maintenanceEvent.id
+        ) {
+            setError(
+                "This maintenance event could not be identified.",
+            );
+
+            return;
+        }
+
+        const eventType =
+            maintenanceEvent.event_type ||
+            "maintenance";
+
+        const confirmed = window.confirm(
+            `Are you sure you want to delete this ${eventType} event? This action cannot be undone.`,
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setError("");
+        setDeletingEventId(maintenanceEvent.id);
+
+        try {
+            await apiClient.delete(
+                `/assets/maintenance-events/${maintenanceEvent.id}`,
+            );
+
+            setEvents((previousEvents) =>
+                previousEvents.filter(
+                    (event) =>
+                        event.id !==
+                        maintenanceEvent.id,
+                ),
+            );
+        } catch (requestError) {
+            console.error(
+                "Unable to delete maintenance event:",
+                requestError,
+            );
+
+            setError(
+                requestError.message ||
+                "Unable to delete the maintenance event.",
+            );
+        } finally {
+            setDeletingEventId(null);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="asset-details-page">
@@ -148,7 +390,19 @@ export default function AssetDetailsPage() {
     if (error && !asset) {
         return (
             <div className="asset-details-page">
-                <p>{error}</p>
+                <div
+                    className="asset-details-page__error"
+                    role="alert"
+                >
+                    {error}
+                </div>
+
+                <Link
+                    className="btn btn--secondary"
+                    to="/homes"
+                >
+                    Return to Homes
+                </Link>
             </div>
         );
     }
@@ -157,6 +411,13 @@ export default function AssetDetailsPage() {
         return (
             <div className="asset-details-page">
                 <p>Asset not found.</p>
+
+                <Link
+                    className="btn btn--secondary"
+                    to="/homes"
+                >
+                    Return to Homes
+                </Link>
             </div>
         );
     }
@@ -187,7 +448,7 @@ export default function AssetDetailsPage() {
                             className="asset-overview__icon"
                             aria-hidden="true"
                         >
-                            {/* Keep your existing icon here */}
+                            <ToolIcon />
                         </div>
 
                         <div>
@@ -200,12 +461,14 @@ export default function AssetDetailsPage() {
                             <div className="asset-overview__meta">
                                 {asset.category && (
                                     <span className="asset-overview__badge">
-                                        {asset.category}
+                                        {
+                                            asset.category
+                                        }
                                     </span>
                                 )}
 
                                 <span className="asset-overview__location">
-                                    {/* Keep your existing location icon here */}
+                                    <LocationIcon />
 
                                     {asset.location ||
                                         "Location not specified"}
@@ -218,19 +481,7 @@ export default function AssetDetailsPage() {
                         className="btn btn--secondary asset-overview__edit"
                         to={`/assets/${asset.id}/edit`}
                     >
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                        >
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
-                        </svg>
-
+                        <PencilIcon />
                         Edit Asset
                     </Link>
                 </div>
@@ -255,6 +506,7 @@ export default function AssetDetailsPage() {
 
                     <div className="asset-overview__detail">
                         <dt>Manufacturer</dt>
+
                         <dd>
                             {asset.manufacturer ||
                                 "Not specified"}
@@ -263,6 +515,7 @@ export default function AssetDetailsPage() {
 
                     <div className="asset-overview__detail">
                         <dt>Model Number</dt>
+
                         <dd>
                             {asset.model_number ||
                                 "Not specified"}
@@ -271,6 +524,7 @@ export default function AssetDetailsPage() {
 
                     <div className="asset-overview__detail">
                         <dt>Serial Number</dt>
+
                         <dd>
                             {asset.serial_number ||
                                 "Not specified"}
@@ -279,15 +533,11 @@ export default function AssetDetailsPage() {
 
                     <div className="asset-overview__detail">
                         <dt>Purchase Cost</dt>
+
                         <dd>
-                            {asset.purchase_cost
-                                ? Number(
-                                    asset.purchase_cost,
-                                ).toLocaleString("en-US", {
-                                    style: "currency",
-                                    currency: "USD",
-                                })
-                                : "Not specified"}
+                            {formatCurrency(
+                                asset.purchase_cost,
+                            )}
                         </dd>
                     </div>
                 </dl>
@@ -313,24 +563,7 @@ export default function AssetDetailsPage() {
                             className="asset-page-card__header-icon"
                             aria-hidden="true"
                         >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="1.8"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <rect
-                                    x="3"
-                                    y="5"
-                                    width="18"
-                                    height="16"
-                                    rx="2"
-                                />
-                                <path d="M16 3v4M8 3v4M3 10h18" />
-                                <path d="M12 14v4M10 16h4" />
-                            </svg>
+                            <CalendarAddIcon />
                         </div>
                     </div>
 
@@ -344,6 +577,7 @@ export default function AssetDetailsPage() {
                                 htmlFor="event_type"
                             >
                                 Event Type
+
                                 <span className="form__required">
                                     *
                                 </span>
@@ -353,19 +587,26 @@ export default function AssetDetailsPage() {
                                 className="form__select"
                                 id="event_type"
                                 name="event_type"
-                                value={eventForm.event_type}
-                                onChange={handleEventChange}
+                                value={
+                                    eventForm.event_type
+                                }
+                                onChange={
+                                    handleEventChange
+                                }
                                 required
                             >
                                 <option value="inspection">
                                     Inspection
                                 </option>
+
                                 <option value="service">
                                     Service
                                 </option>
+
                                 <option value="repair">
                                     Repair
                                 </option>
+
                                 <option value="replacement">
                                     Replacement
                                 </option>
@@ -379,6 +620,7 @@ export default function AssetDetailsPage() {
                                     htmlFor="event_date"
                                 >
                                     Event Date
+
                                     <span className="form__required">
                                         *
                                     </span>
@@ -389,8 +631,12 @@ export default function AssetDetailsPage() {
                                     id="event_date"
                                     name="event_date"
                                     type="date"
-                                    value={eventForm.event_date}
-                                    onChange={handleEventChange}
+                                    value={
+                                        eventForm.event_date
+                                    }
+                                    onChange={
+                                        handleEventChange
+                                    }
                                     required
                                 />
                             </div>
@@ -415,7 +661,9 @@ export default function AssetDetailsPage() {
                                         type="number"
                                         step="0.01"
                                         min="0"
-                                        value={eventForm.cost}
+                                        value={
+                                            eventForm.cost
+                                        }
                                         onChange={
                                             handleEventChange
                                         }
@@ -438,7 +686,9 @@ export default function AssetDetailsPage() {
                                 id="notes"
                                 name="notes"
                                 value={eventForm.notes}
-                                onChange={handleEventChange}
+                                onChange={
+                                    handleEventChange
+                                }
                                 placeholder="Add details about the work performed..."
                                 rows="5"
                             />
@@ -448,7 +698,10 @@ export default function AssetDetailsPage() {
                             <button
                                 className="btn btn--primary"
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={
+                                    isSubmitting ||
+                                    deletingEventId !== null
+                                }
                             >
                                 {isSubmitting
                                     ? "Adding..."
@@ -484,24 +737,7 @@ export default function AssetDetailsPage() {
                                 className="maintenance-history__empty-icon"
                                 aria-hidden="true"
                             >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <rect
-                                        x="3"
-                                        y="5"
-                                        width="18"
-                                        height="16"
-                                        rx="2"
-                                    />
-                                    <path d="M16 3v4M8 3v4M3 10h18" />
-                                    <path d="M8 15h8" />
-                                </svg>
+                                <CalendarIcon />
                             </div>
 
                             <h3>
@@ -509,87 +745,108 @@ export default function AssetDetailsPage() {
                             </h3>
 
                             <p>
-                                Add the first maintenance event
-                                to begin building a service
-                                history for this asset.
+                                Add the first maintenance
+                                event to begin building a
+                                service history for this
+                                asset.
                             </p>
                         </div>
                     ) : (
                         <div className="maintenance-history">
-                            {events.map((event) => (
-                                <article
-                                    className="maintenance-history__item"
-                                    key={event.id}
-                                >
-                                    <div
-                                        className="maintenance-history__icon"
-                                        aria-hidden="true"
-                                    >
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="1.8"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
+                            {events.map(
+                                (maintenanceEvent) => {
+                                    const isDeleting =
+                                        deletingEventId ===
+                                        maintenanceEvent.id;
+
+                                    return (
+                                        <article
+                                            className="maintenance-history__item"
+                                            key={
+                                                maintenanceEvent.id
+                                            }
                                         >
-                                            <path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.5 5.5l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a4.2 4.2 0 0 1 5.5-5.5l-3 3" />
-                                            <path d="m15 15 6 6" />
-                                        </svg>
-                                    </div>
+                                            <div
+                                                className="maintenance-history__icon"
+                                                aria-hidden="true"
+                                            >
+                                                <ToolIcon />
+                                            </div>
 
-                                    <div className="maintenance-history__content">
-                                        <div className="maintenance-history__heading">
-                                            <h3>
-                                                {
-                                                    event.event_type
-                                                }
-                                            </h3>
+                                            <div className="maintenance-history__content">
+                                                <div className="maintenance-history__heading">
+                                                    <div className="maintenance-history__title-group">
+                                                        <h3 className="maintenance-history__event-type">
+                                                            {
+                                                                maintenanceEvent.event_type
+                                                            }
+                                                        </h3>
 
-                                            <span className="maintenance-history__status">
-                                                Complete
-                                            </span>
-                                        </div>
+                                                        <span className="maintenance-history__status">
+                                                            Complete
+                                                        </span>
+                                                    </div>
 
-                                        <p className="maintenance-history__date">
-                                            {new Date(
-                                                event.event_date,
-                                            ).toLocaleDateString(
-                                                "en-US",
-                                                {
-                                                    year: "numeric",
-                                                    month: "long",
-                                                    day: "numeric",
-                                                },
-                                            )}
-                                        </p>
+                                                    <button
+                                                        className="maintenance-history__delete"
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleDeleteEvent(
+                                                                maintenanceEvent,
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            isDeleting ||
+                                                            deletingEventId !==
+                                                            null
+                                                        }
+                                                        aria-label={`Delete ${maintenanceEvent.event_type} maintenance event`}
+                                                    >
+                                                        {isDeleting ? (
+                                                            <>
+                                                                <span
+                                                                    className="maintenance-history__delete-spinner"
+                                                                    aria-hidden="true"
+                                                                />
 
-                                        <p className="maintenance-history__notes">
-                                            {event.notes ||
-                                                "No notes added."}
-                                        </p>
+                                                                Deleting...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <TrashIcon />
+                                                                Delete
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
 
-                                        <p className="maintenance-history__cost">
-                                            <span>Cost</span>
+                                                <p className="maintenance-history__date">
+                                                    {formatEventDate(
+                                                        maintenanceEvent.event_date,
+                                                    )}
+                                                </p>
 
-                                            <strong>
-                                                {event.cost
-                                                    ? Number(
-                                                        event.cost,
-                                                    ).toLocaleString(
-                                                        "en-US",
-                                                        {
-                                                            style: "currency",
-                                                            currency:
-                                                                "USD",
-                                                        },
-                                                    )
-                                                    : "Not specified"}
-                                            </strong>
-                                        </p>
-                                    </div>
-                                </article>
-                            ))}
+                                                <p className="maintenance-history__notes">
+                                                    {maintenanceEvent.notes ||
+                                                        "No notes added."}
+                                                </p>
+
+                                                <p className="maintenance-history__cost">
+                                                    <span>
+                                                        Cost
+                                                    </span>
+
+                                                    <strong>
+                                                        {formatCurrency(
+                                                            maintenanceEvent.cost,
+                                                        )}
+                                                    </strong>
+                                                </p>
+                                            </div>
+                                        </article>
+                                    );
+                                },
+                            )}
                         </div>
                     )}
                 </section>
