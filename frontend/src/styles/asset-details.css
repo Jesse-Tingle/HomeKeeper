@@ -582,6 +582,125 @@
     color: #8ca0bd;
 }
 
+.asset-overview__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.asset-overview__delete {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 1rem;
+
+    font: inherit;
+    font-weight: 700;
+    color: #b42318;
+
+    background: #ffffff;
+    border: 1px solid #fecaca;
+    border-radius: 0.7rem;
+
+    cursor: pointer;
+
+    transition:
+        color 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.asset-overview__delete:hover:not(:disabled) {
+    color: #991b1b;
+    background: #fff1f0;
+    border-color: #fca5a5;
+    transform: translateY(-1px);
+}
+
+.asset-overview__delete:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.asset-overview__delete:focus-visible {
+    outline: 3px solid rgba(220, 38, 38, 0.18);
+    outline-offset: 2px;
+}
+
+.asset-overview__delete:disabled {
+    color: #94a3b8;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+}
+
+.asset-overview__delete svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.asset-overview__delete-spinner {
+    width: 0.95rem;
+    height: 0.95rem;
+
+    border: 2px solid rgba(180, 35, 24, 0.25);
+    border-top-color: currentColor;
+    border-radius: 50%;
+
+    animation: asset-delete-spin 700ms linear infinite;
+}
+
+.asset-delete-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.15rem;
+    margin: -0.25rem 0 1.5rem;
+
+    color: #7c4a03;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 0.85rem;
+}
+
+.asset-delete-notice__icon {
+    display: grid;
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+
+    color: #d97706;
+}
+
+.asset-delete-notice__icon svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.asset-delete-notice strong {
+    display: block;
+    margin-bottom: 0.2rem;
+
+    font-size: 0.9rem;
+}
+
+.asset-delete-notice p {
+    margin: 0;
+
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: #92400e;
+}
+
+@keyframes asset-delete-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 /* ===========================
    Tablet Layout
@@ -705,6 +824,16 @@
     .maintenance-history__delete {
         padding-inline: 0.45rem;
     }
+
+	.asset-overview__actions {
+		width: 100%;
+		flex-direction: column;
+	}
+	
+	.asset-overview__actions .btn,
+	.asset-overview__delete {
+		width: 100%;
+	}
 }
 
 

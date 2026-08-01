@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import apiClient from "../api/apiClient";
 import "../styles/asset-details.css";
@@ -180,9 +180,12 @@ function TrashIcon() {
 export default function AssetDetailsPage() {
     const { id } = useParams();
 
+    const navigate = useNavigate();
+
     const [asset, setAsset] = useState(null);
     const [home, setHome] = useState(null);
     const [events, setEvents] = useState([]);
+    const [isDeletingAsset, setIsDeletingAsset] = useState(false);
 
     const [eventForm, setEventForm] = useState(
         EMPTY_EVENT_FORM,
@@ -379,6 +382,51 @@ export default function AssetDetailsPage() {
         }
     };
 
+    const handleDeleteAsset = async () => {
+        if (!asset) {
+            return;
+        }
+
+        if (events.length > 0) {
+            setError(
+                "This asset cannot be deleted until all maintenance events have been removed.",
+            );
+
+            return;
+        }
+
+        const confirmed = window.confirm(
+            `Are you sure you want to delete "${asset.name}"? This action cannot be undone.`,
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setError("");
+        setIsDeletingAsset(true);
+
+        try {
+            await apiClient.delete(`/assets/${asset.id}`);
+
+            navigate(`/homes/${asset.home_id}`, {
+                replace: true,
+            });
+        } catch (requestError) {
+            console.error(
+                "Unable to delete asset:",
+                requestError,
+            );
+
+            setError(
+                requestError.message ||
+                "Unable to delete this asset.",
+            );
+        } finally {
+            setIsDeletingAsset(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="asset-details-page">
@@ -477,13 +525,81 @@ export default function AssetDetailsPage() {
                         </div>
                     </div>
 
-                    <Link
-                        className="btn btn--secondary asset-overview__edit"
-                        to={`/assets/${asset.id}/edit`}
-                    >
-                        <PencilIcon />
-                        Edit Asset
-                    </Link>
+                    <div className="asset-overview__actions">
+                        <Link
+                            className="btn btn--secondary asset-overview__edit"
+                            to={`/assets/${asset.id}/edit`}
+                        >
+                            <PencilIcon />
+                            Edit Asset
+                        </Link>
+
+                        <button
+                            className="btn asset-overview__delete"
+                            type="button"
+                            onClick={handleDeleteAsset}
+                            disabled={
+                                isDeletingAsset ||
+                                events.length > 0
+                            }
+                            title={
+                                events.length > 0
+                                    ? "Remove all maintenance events before deleting this asset."
+                                    : `Delete ${asset.name}`
+                            }
+                        >
+                            {isDeletingAsset ? (
+                                <>
+                                    <span
+                                        className="asset-overview__delete-spinner"
+                                        aria-hidden="true"
+                                    />
+                                    Deleting...
+                                </>
+                            ) : (
+                                <>
+                                    <TrashIcon />
+                                    Delete Asset
+                                </>
+                            )}
+                        </button>
+                    </div>
+
+                    {events.length > 0 && (
+                        <div
+                            className="asset-delete-notice"
+                            role="status"
+                        >
+                            <div
+                                className="asset-delete-notice__icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 8v4" />
+                                    <path d="M12 16h.01" />
+                                </svg>
+                            </div>
+
+                            <div>
+                                <strong>Asset deletion is unavailable</strong>
+
+                                <p>
+                                    This asset has {events.length} maintenance{" "}
+                                    {events.length === 1 ? "event" : "events"}.
+                                    Delete all maintenance history before deleting
+                                    the asset.
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <dl className="asset-overview__details">
