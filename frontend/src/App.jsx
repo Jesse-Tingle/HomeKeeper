@@ -12,6 +12,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import HomesPage from "./pages/HomesPage";
 import AddHomePage from "./pages/AddHomePage";
 import EditHomePage from "./pages/EditHomePage";
+import EditAssetPage from "./pages/EditAssetPage";
 
 export default function App() {
   return (
@@ -27,6 +28,10 @@ export default function App() {
           <Route path="/homes/new" element={<AddHomePage />} />
           <Route path="/homes/:id/edit" element={<EditHomePage />} />
           <Route path="/homes/:id" element={<HomeDetailsPage />} />
+          <Route
+            path="/assets/:id/edit"
+            element={<EditAssetPage />}
+          />
           <Route path="/assets/:id" element={<AssetDetailsPage />} />
         </Route>
       </Route>

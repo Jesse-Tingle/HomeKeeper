@@ -54,9 +54,22 @@
 }
 
 .asset-overview__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1.5rem;
 	padding-bottom: 1.75rem;
 
 	border-bottom: 1px solid #e9eef5;
+}
+
+.asset-overview__edit {
+	flex: 0 0 auto;
+}
+
+.asset-overview__edit svg {
+	width: 1rem;
+	height: 1rem;
 }
 
 .asset-overview__identity {
@@ -484,6 +497,14 @@
 	.asset-overview,
 	.asset-page-card {
 		padding: 1.25rem;
+	}
+
+	.asset-overview__header {
+		flex-direction: column;
+	}
+
+	.asset-overview__edit {
+		width: 100%;
 	}
 
 	.asset-overview__identity {
