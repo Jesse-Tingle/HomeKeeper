@@ -185,26 +185,35 @@ const updateAsset = async (req, res) => {
 	try {
 		const { id } = req.params;
 
-		const assetCheck = await pool.query(`
-			  SELECT id, home_id
-			  FROM assets
-			  WHERE id = $1;
-			`, [id]);
+		const assetCheck = await pool.query(
+			`
+			SELECT *
+			FROM assets
+			WHERE id = $1;
+			`,
+			[id],
+		);
 
 		if (assetCheck.rows.length === 0) {
-			return res.status(404).json({ error: "Asset not found" });
+			return res.status(404).json({
+				error: "Asset not found",
+			});
 		}
 
 		const existingAsset = assetCheck.rows[0];
 
-		const membership = await userBelongsToHome(req.user.userId, existingAsset.home_id);
+		const membership = await userBelongsToHome(
+			req.user.userId,
+			existingAsset.home_id,
+		);
 
 		if (!membership) {
-			return res.status(403).json({ error: "You do not have access to this asset" });
+			return res.status(403).json({
+				error: "You do not have access to this asset",
+			});
 		}
 
 		const {
-			home_id,
 			name,
 			category,
 			manufacturer,
@@ -216,54 +225,50 @@ const updateAsset = async (req, res) => {
 			expected_lifespan_years,
 			purchase_cost,
 			notes,
-			created_by_user_id
 		} = req.body;
 
-		const result = await pool.query(`
-		  UPDATE assets
-		  SET
-			home_id = $1,
-			name = $2,
-			category = $3,
-			manufacturer = $4,
-			model_number = $5,
-			serial_number = $6,
-			location = $7,
-			install_date = $8,
-			warranty_expiration_date = $9,
-			expected_lifespan_years = $10,
-			purchase_cost = $11,
-			notes = $12,
-			created_by_user_id = $13,
-			updated_at = CURRENT_TIMESTAMP
-		  WHERE id = $14
-		  RETURNING *;
-		`, [
-			home_id,
-			name,
-			category,
-			manufacturer,
-			model_number,
-			serial_number,
-			location,
-			install_date,
-			warranty_expiration_date,
-			expected_lifespan_years,
-			purchase_cost,
-			notes,
-			created_by_user_id,
-			id,
-		]);
-
-		if (result.rows.length === 0) {
-			return res.status(404).json({ error: "Asset not found" });
-		}
+		const result = await pool.query(
+			`
+			UPDATE assets
+			SET
+				name = $1,
+				category = $2,
+				manufacturer = $3,
+				model_number = $4,
+				serial_number = $5,
+				location = $6,
+				install_date = $7,
+				warranty_expiration_date = $8,
+				expected_lifespan_years = $9,
+				purchase_cost = $10,
+				notes = $11,
+				updated_at = CURRENT_TIMESTAMP
+			WHERE id = $12
+			RETURNING *;
+			`,
+			[
+				name,
+				category,
+				manufacturer || null,
+				model_number || null,
+				serial_number || null,
+				location || null,
+				install_date || null,
+				warranty_expiration_date || null,
+				expected_lifespan_years || null,
+				purchase_cost || null,
+				notes || null,
+				id,
+			],
+		);
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
 		console.error("Error updating asset:", error);
 
-		return res.status(500).json({ error: "Failed to update asset" });
+		return res.status(500).json({
+			error: "Failed to update asset",
+		});
 	}
 };
 
