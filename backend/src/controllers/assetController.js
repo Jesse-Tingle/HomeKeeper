@@ -276,70 +276,78 @@ const updateMaintenanceEvent = async (req, res) => {
 	try {
 		const { id } = req.params;
 
-		const eventCheck = await pool.query(`
-			  SELECT
-				maintenance_events.id,
-				maintenance_events.asset_id,
-				assets.home_id
-			  FROM maintenance_events
-			  INNER JOIN assets
-				ON maintenance_events.asset_id = assets.id
-			  WHERE maintenance_events.id = $1;
-			`, [id]);
+		const eventCheck = await pool.query(
+			`
+            SELECT
+                maintenance_events.id,
+                maintenance_events.asset_id,
+                assets.home_id
+            FROM maintenance_events
+            INNER JOIN assets
+                ON maintenance_events.asset_id = assets.id
+            WHERE maintenance_events.id = $1;
+            `,
+			[id],
+		);
 
 		if (eventCheck.rows.length === 0) {
-			return res.status(404).json({ error: "Maintenance event not found" });
+			return res.status(404).json({
+				error: "Maintenance event not found",
+			});
 		}
 
 		const existingEvent = eventCheck.rows[0];
 
-		const membership = await userBelongsToHome(req.user.userId, existingEvent.home_id);
+		const membership = await userBelongsToHome(
+			req.user.userId,
+			existingEvent.home_id,
+		);
 
 		if (!membership) {
-			return res.status(403).json({ error: "You do not have access to this maintenance event" });
+			return res.status(403).json({
+				error:
+					"You do not have access to this maintenance event",
+			});
 		}
 
 		const {
-			asset_id,
-			event_type,
-			event_date,
-			cost,
-			notes
-		} = req.body;
-
-		const created_by_user_id = req.user.userId;
-
-		const result = await pool.query(`
-		  UPDATE maintenance_events
-		  SET
-			asset_id = $1,
-			event_type = $2,
-			event_date = $3,
-			cost = $4,
-			notes = $5,
-			created_by_user_id = $6,
-			updated_at = CURRENT_TIMESTAMP
-		  WHERE id = $7
-		  RETURNING *;
-		`, [
-			asset_id,
 			event_type,
 			event_date,
 			cost,
 			notes,
-			created_by_user_id,
-			id,
-		]);
+		} = req.body;
 
-		if (result.rows.length === 0) {
-			return res.status(404).json({ error: "Maintenance event not found" });
-		}
+		const result = await pool.query(
+			`
+            UPDATE maintenance_events
+            SET
+                event_type = $1,
+                event_date = $2,
+                cost = $3,
+                notes = $4,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = $5
+            RETURNING *;
+            `,
+			[
+				event_type,
+				event_date,
+				cost ?? null,
+				notes || null,
+				id,
+			],
+		);
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
-		console.error("Error updating maintenance event:", error);
+		console.error(
+			"Error updating maintenance event:",
+			error,
+		);
 
-		return res.status(500).json({ error: "Failed to update maintenance event" });
+		return res.status(500).json({
+			error: "Failed to update maintenance event",
+		});
 	}
 };
 
