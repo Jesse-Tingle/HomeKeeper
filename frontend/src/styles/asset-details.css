@@ -13,38 +13,24 @@
     align-items: center;
     gap: 0.45rem;
     margin-bottom: 1.25rem;
-
+    color: #2563eb;
     font-size: 0.9rem;
     font-weight: 650;
-    color: #2563eb;
     text-decoration: none;
-
-    transition:
-        color 160ms ease,
-        transform 160ms ease;
 }
 
 .asset-details-page__back:hover {
     color: #1d4ed8;
-    transform: translateX(-2px);
-}
-
-.asset-details-page__back:focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.2);
-    outline-offset: 4px;
-    border-radius: 0.35rem;
 }
 
 .asset-details-page__error {
     padding: 1rem 1.25rem;
     margin-bottom: 1.25rem;
-
     color: #b42318;
     background: #fff1f0;
     border: 1px solid #fecaca;
     border-radius: 0.85rem;
 }
-
 
 /* ===========================
    Asset Overview
@@ -53,12 +39,7 @@
 .asset-overview {
     padding: 2rem;
     margin-bottom: 1.5rem;
-
-    background: linear-gradient(
-        135deg,
-        #ffffff,
-        #fbfcff
-    );
+    background: #ffffff;
     border: 1px solid #e3e9f2;
     border-radius: 1rem;
     box-shadow: 0 8px 22px rgba(35, 55, 89, 0.05);
@@ -70,7 +51,6 @@
     justify-content: space-between;
     gap: 1.5rem;
     padding-bottom: 1.75rem;
-
     border-bottom: 1px solid #e9eef5;
 }
 
@@ -87,7 +67,6 @@
     width: 4.5rem;
     height: 4.5rem;
     place-items: center;
-
     color: #2563eb;
     background: #eaf1ff;
     border-radius: 50%;
@@ -98,23 +77,21 @@
     height: 2.25rem;
 }
 
-.asset-overview__eyebrow {
+.asset-overview__eyebrow,
+.asset-page-card__eyebrow {
     margin: 0 0 0.35rem;
-
-    font-size: 0.78rem;
-    font-weight: 750;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
     color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .asset-overview h1 {
     margin: 0;
-
-    font-size: clamp(2rem, 4vw, 2.75rem);
-    line-height: 1.05;
-    letter-spacing: -0.04em;
     color: #142033;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    letter-spacing: -0.04em;
 }
 
 .asset-overview__meta {
@@ -126,460 +103,17 @@
 }
 
 .asset-overview__badge {
-    display: inline-flex;
-    align-items: center;
     padding: 0.38rem 0.75rem;
-
-    font-size: 0.78rem;
-    font-weight: 700;
     color: #1d4ed8;
     background: #edf3ff;
     border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
 }
 
 .asset-overview__location {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-
+    color: #64748b;
     font-size: 0.88rem;
-    color: #64748b;
-}
-
-.asset-overview__location svg {
-    width: 1rem;
-    height: 1rem;
-}
-
-.asset-overview__edit {
-    flex: 0 0 auto;
-}
-
-.asset-overview__edit svg {
-    width: 1rem;
-    height: 1rem;
-}
-
-.asset-overview__details {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    padding-top: 1.75rem;
-    margin: 0;
-}
-
-.asset-overview__detail {
-    min-width: 0;
-    padding: 0 1.5rem;
-
-    border-right: 1px solid #e9eef5;
-}
-
-.asset-overview__detail:first-child {
-    padding-left: 0;
-}
-
-.asset-overview__detail:last-child {
-    padding-right: 0;
-    border-right: 0;
-}
-
-.asset-overview__detail dt {
-    margin-bottom: 0.45rem;
-
-    font-size: 0.78rem;
-    font-weight: 650;
-    color: #94a3b8;
-}
-
-.asset-overview__detail dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-
-    font-size: 0.95rem;
-    font-weight: 650;
-    color: #263246;
-}
-
-.asset-overview__home-link {
-    font-weight: 700;
-    color: #2563eb;
-    text-decoration: none;
-}
-
-.asset-overview__home-link:hover {
-    color: #1d4ed8;
-    text-decoration: underline;
-}
-
-.asset-overview__home-link:focus-visible {
-    outline: 3px solid rgba(37, 99, 235, 0.18);
-    outline-offset: 3px;
-    border-radius: 0.25rem;
-}
-
-
-/* ===========================
-   Main Content Grid
-=========================== */
-
-.asset-details-page__grid {
-    display: grid;
-    grid-template-columns:
-        minmax(0, 1.05fr)
-        minmax(340px, 0.95fr);
-    gap: 1.5rem;
-    align-items: start;
-}
-
-
-/* ===========================
-   Shared Cards
-=========================== */
-
-.asset-page-card {
-    min-width: 0;
-    padding: 1.8rem;
-
-    background: #ffffff;
-    border: 1px solid #e3e9f2;
-    border-radius: 1rem;
-    box-shadow: 0 8px 22px rgba(35, 55, 89, 0.05);
-}
-
-.asset-page-card__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.25rem;
-    padding-bottom: 1.4rem;
-    margin-bottom: 1.5rem;
-
-    border-bottom: 1px solid #e9eef5;
-}
-
-.asset-page-card__eyebrow {
-    margin: 0 0 0.3rem;
-
-    font-size: 0.72rem;
-    font-weight: 750;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #94a3b8;
-}
-
-.asset-page-card__header h2 {
-    margin: 0;
-
-    font-size: 1.3rem;
-    color: #172033;
-}
-
-.asset-page-card__header-icon {
-    display: grid;
-    flex: 0 0 auto;
-    width: 3rem;
-    height: 3rem;
-    place-items: center;
-
-    color: #2563eb;
-    background: #eaf1ff;
-    border-radius: 50%;
-}
-
-.asset-page-card__header-icon svg {
-    width: 1.45rem;
-    height: 1.45rem;
-}
-
-.asset-page-card__count {
-    display: grid;
-    flex: 0 0 auto;
-    width: 2.5rem;
-    height: 2.5rem;
-    place-items: center;
-
-    font-size: 0.85rem;
-    font-weight: 750;
-    color: #2563eb;
-    background: #eaf1ff;
-    border-radius: 50%;
-}
-
-
-/* ===========================
-   Maintenance Form
-=========================== */
-
-.asset-maintenance-form {
-    gap: 1.2rem;
-}
-
-.asset-maintenance-form__cost {
-    position: relative;
-}
-
-.asset-maintenance-form__cost > span {
-    position: absolute;
-    z-index: 1;
-    top: 50%;
-    left: 1rem;
-
-    font-size: 0.95rem;
-    font-weight: 650;
-    color: #64748b;
-
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-.asset-maintenance-form__cost .form__input {
-    padding-left: 2rem;
-}
-
-.asset-maintenance-form__actions {
-    justify-content: flex-start;
-    margin-top: 0.25rem;
-}
-
-
-/* ===========================
-   Maintenance History
-=========================== */
-
-.maintenance-history {
-    display: flex;
-    flex-direction: column;
-}
-
-.maintenance-history__item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1.25rem 0;
-
-    border-bottom: 1px solid #edf1f6;
-}
-
-.maintenance-history__item:first-child {
-    padding-top: 0;
-}
-
-.maintenance-history__item:last-child {
-    padding-bottom: 0;
-    border-bottom: 0;
-}
-
-.maintenance-history__icon {
-    display: grid;
-    flex: 0 0 auto;
-    width: 3rem;
-    height: 3rem;
-    place-items: center;
-
-    color: #2563eb;
-    background: #eaf1ff;
-    border-radius: 50%;
-}
-
-.maintenance-history__icon svg {
-    width: 1.35rem;
-    height: 1.35rem;
-}
-
-.maintenance-history__content {
-    min-width: 0;
-    flex: 1;
-}
-
-.maintenance-history__heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.maintenance-history__title-group {
-    display: flex;
-    min-width: 0;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-}
-
-.maintenance-history__event-type {
-    margin: 0;
-
-    font-size: 0.98rem;
-    font-weight: 700;
-    text-transform: capitalize;
-    color: #263246;
-}
-
-.maintenance-history__status {
-    flex: 0 0 auto;
-    padding: 0.25rem 0.55rem;
-
-    font-size: 0.68rem;
-    font-weight: 750;
-    color: #078735;
-    background: #eaf8ef;
-    border-radius: 999px;
-}
-
-.maintenance-history__date {
-    margin: 0.3rem 0 0;
-
-    font-size: 0.8rem;
-    color: #8ca0bd;
-}
-
-.maintenance-history__notes {
-    margin: 0.75rem 0 0;
-
-    font-size: 0.87rem;
-    line-height: 1.6;
-    color: #64748b;
-}
-
-.maintenance-history__cost {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.8rem;
-    margin: 0.8rem 0 0;
-
-    font-size: 0.82rem;
-    color: #64748b;
-    border-top: 1px dashed #e4eaf2;
-}
-
-.maintenance-history__cost strong {
-    color: #263246;
-}
-
-
-/* ===========================
-   Delete Maintenance Button
-=========================== */
-
-.maintenance-history__delete {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    min-height: 2rem;
-    padding: 0.35rem 0.6rem;
-
-    font: inherit;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #b42318;
-
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 0.55rem;
-
-    cursor: pointer;
-
-    transition:
-        color 160ms ease,
-        background-color 160ms ease,
-        border-color 160ms ease,
-        transform 160ms ease;
-}
-
-.maintenance-history__delete:hover:not(:disabled) {
-    color: #991b1b;
-    background: #fff1f0;
-    border-color: #fecaca;
-    transform: translateY(-1px);
-}
-
-.maintenance-history__delete:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.maintenance-history__delete:focus-visible {
-    outline: 3px solid rgba(220, 38, 38, 0.18);
-    outline-offset: 2px;
-}
-
-.maintenance-history__delete:disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
-}
-
-.maintenance-history__delete svg {
-    width: 0.95rem;
-    height: 0.95rem;
-}
-
-.maintenance-history__delete-spinner {
-    width: 0.85rem;
-    height: 0.85rem;
-
-    border: 2px solid rgba(180, 35, 24, 0.25);
-    border-top-color: currentColor;
-    border-radius: 50%;
-
-    animation: maintenance-delete-spin 700ms linear infinite;
-}
-
-@keyframes maintenance-delete-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* ===========================
-   Empty Maintenance History
-=========================== */
-
-.maintenance-history__empty {
-    display: flex;
-    min-height: 310px;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    padding: 2rem;
-
-    text-align: center;
-}
-
-.maintenance-history__empty-icon {
-    display: grid;
-    width: 4rem;
-    height: 4rem;
-    margin-bottom: 1rem;
-    place-items: center;
-
-    color: #2563eb;
-    background: #eaf1ff;
-    border-radius: 50%;
-}
-
-.maintenance-history__empty-icon svg {
-    width: 1.8rem;
-    height: 1.8rem;
-}
-
-.maintenance-history__empty h3 {
-    margin: 0;
-
-    font-size: 1rem;
-    color: #263246;
-}
-
-.maintenance-history__empty p {
-    max-width: 310px;
-    margin: 0.55rem 0 0;
-
-    font-size: 0.86rem;
-    line-height: 1.6;
-    color: #8ca0bd;
 }
 
 .asset-overview__actions {
@@ -589,6 +123,11 @@
     gap: 0.75rem;
 }
 
+.asset-overview__actions svg {
+    width: 1rem;
+    height: 1rem;
+}
+
 .asset-overview__delete {
     display: inline-flex;
     min-height: 2.75rem;
@@ -596,17 +135,13 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0 1rem;
-
-    font: inherit;
-    font-weight: 700;
     color: #b42318;
-
     background: #ffffff;
     border: 1px solid #fecaca;
     border-radius: 0.7rem;
-
+    font: inherit;
+    font-weight: 700;
     cursor: pointer;
-
     transition:
         color 160ms ease,
         background-color 160ms ease,
@@ -621,15 +156,6 @@
     transform: translateY(-1px);
 }
 
-.asset-overview__delete:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-.asset-overview__delete:focus-visible {
-    outline: 3px solid rgba(220, 38, 38, 0.18);
-    outline-offset: 2px;
-}
-
 .asset-overview__delete:disabled {
     color: #94a3b8;
     background: #f8fafc;
@@ -637,73 +163,327 @@
     cursor: not-allowed;
 }
 
-.asset-overview__delete svg {
-    width: 1rem;
-    height: 1rem;
-}
-
 .asset-overview__delete-spinner {
     width: 0.95rem;
     height: 0.95rem;
-
     border: 2px solid rgba(180, 35, 24, 0.25);
     border-top-color: currentColor;
     border-radius: 50%;
+    animation: asset-spin 700ms linear infinite;
+}
 
-    animation: asset-delete-spin 700ms linear infinite;
+.asset-overview__details {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    padding-top: 1.75rem;
+    margin: 0;
+}
+
+.asset-overview__detail {
+    min-width: 0;
+    padding: 0 1.5rem;
+    border-right: 1px solid #e9eef5;
+}
+
+.asset-overview__detail:first-child {
+    padding-left: 0;
+}
+
+.asset-overview__detail:last-child {
+    padding-right: 0;
+    border-right: 0;
+}
+
+.asset-overview__detail dt {
+    margin-bottom: 0.45rem;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+
+.asset-overview__detail dd {
+    margin: 0;
+    color: #263246;
+    font-size: 0.95rem;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.asset-overview__home-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.asset-overview__home-link:hover {
+    text-decoration: underline;
 }
 
 .asset-delete-notice {
     display: flex;
-    align-items: flex-start;
-    gap: 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
     padding: 1rem 1.15rem;
     margin: -0.25rem 0 1.5rem;
-
-    color: #7c4a03;
+    color: #92400e;
     background: #fffbeb;
     border: 1px solid #fde68a;
     border-radius: 0.85rem;
 }
 
-.asset-delete-notice__icon {
+/* ===========================
+   Main Grid and Cards
+=========================== */
+
+.asset-details-page__grid {
     display: grid;
-    flex: 0 0 auto;
-    width: 2rem;
-    height: 2rem;
-    place-items: center;
-
-    color: #d97706;
+    grid-template-columns:
+        minmax(0, 1.05fr)
+        minmax(340px, 0.95fr);
+    gap: 1.5rem;
+    align-items: start;
 }
 
-.asset-delete-notice__icon svg {
-    width: 1.3rem;
-    height: 1.3rem;
+.asset-page-card {
+    min-width: 0;
+    padding: 1.8rem;
+    background: #ffffff;
+    border: 1px solid #e3e9f2;
+    border-radius: 1rem;
+    box-shadow: 0 8px 22px rgba(35, 55, 89, 0.05);
 }
 
-.asset-delete-notice strong {
-    display: block;
-    margin-bottom: 0.2rem;
-
-    font-size: 0.9rem;
+.asset-page-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-bottom: 1.4rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e9eef5;
 }
 
-.asset-delete-notice p {
+.asset-page-card__header h2 {
     margin: 0;
-
-    font-size: 0.84rem;
-    line-height: 1.5;
-    color: #92400e;
+    color: #172033;
+    font-size: 1.3rem;
 }
 
-@keyframes asset-delete-spin {
+.asset-page-card__count {
+    display: grid;
+    width: 2.5rem;
+    height: 2.5rem;
+    place-items: center;
+    color: #2563eb;
+    background: #eaf1ff;
+    border-radius: 50%;
+    font-size: 0.85rem;
+    font-weight: 750;
+}
+
+.asset-maintenance-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* ===========================
+   Maintenance History
+=========================== */
+
+.maintenance-history {
+    display: flex;
+    flex-direction: column;
+}
+
+.maintenance-history__item {
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.maintenance-history__item:first-child {
+    padding-top: 0;
+}
+
+.maintenance-history__item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.maintenance-history__content {
+    min-width: 0;
+}
+
+.maintenance-history__heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.maintenance-history__heading > div:first-child {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.maintenance-history__event-type {
+    margin: 0;
+    color: #263246;
+    font-size: 0.98rem;
+    text-transform: capitalize;
+}
+
+.maintenance-history__status {
+    padding: 0.25rem 0.55rem;
+    color: #078735;
+    background: #eaf8ef;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 750;
+}
+
+.maintenance-history__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.maintenance-history__edit,
+.maintenance-history__delete {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.55rem;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease;
+}
+
+.maintenance-history__edit {
+    color: #2563eb;
+}
+
+.maintenance-history__edit:hover:not(:disabled) {
+    color: #1d4ed8;
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.maintenance-history__delete {
+    color: #b42318;
+}
+
+.maintenance-history__delete:hover:not(:disabled) {
+    color: #991b1b;
+    background: #fff1f0;
+    border-color: #fecaca;
+}
+
+.maintenance-history__edit:disabled,
+.maintenance-history__delete:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.maintenance-history__edit svg,
+.maintenance-history__delete svg {
+    width: 0.95rem;
+    height: 0.95rem;
+}
+
+.maintenance-history__date {
+    margin: 0.3rem 0 0;
+    color: #8ca0bd;
+    font-size: 0.8rem;
+}
+
+.maintenance-history__notes {
+    margin: 0.75rem 0 0;
+    color: #64748b;
+    font-size: 0.87rem;
+    line-height: 1.6;
+}
+
+.maintenance-history__cost {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.8rem;
+    margin: 0.8rem 0 0;
+    color: #64748b;
+    border-top: 1px dashed #e4eaf2;
+    font-size: 0.82rem;
+}
+
+.maintenance-history__cost strong {
+    color: #263246;
+}
+
+.maintenance-history__empty {
+    padding: 2rem;
+    text-align: center;
+}
+
+.maintenance-history__empty h3 {
+    margin: 0;
+    color: #263246;
+}
+
+.maintenance-history__empty p {
+    margin: 0.55rem 0 0;
+    color: #8ca0bd;
+    line-height: 1.6;
+}
+
+/* ===========================
+   Edit Maintenance Form
+=========================== */
+
+.maintenance-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.1rem;
+    background: #f8fafc;
+    border: 1px solid #dbe5f0;
+    border-radius: 0.85rem;
+}
+
+.maintenance-edit-form__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.maintenance-edit-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+@keyframes asset-spin {
     to {
         transform: rotate(360deg);
     }
 }
 
 /* ===========================
-   Tablet Layout
+   Responsive
 =========================== */
 
 @media (max-width: 1050px) {
@@ -712,32 +492,14 @@
         row-gap: 1.5rem;
     }
 
-    .asset-overview__detail {
-        padding: 0 1.5rem 1.25rem;
-    }
-
-    .asset-overview__detail:nth-child(odd) {
-        padding-left: 0;
-    }
-
     .asset-overview__detail:nth-child(even) {
-        padding-right: 0;
         border-right: 0;
-    }
-
-    .asset-overview__detail:nth-last-child(-n + 2) {
-        padding-bottom: 0;
     }
 
     .asset-details-page__grid {
         grid-template-columns: 1fr;
     }
 }
-
-
-/* ===========================
-   Mobile Layout
-=========================== */
 
 @media (max-width: 620px) {
     .asset-overview,
@@ -747,7 +509,6 @@
 
     .asset-overview__header {
         flex-direction: column;
-        align-items: stretch;
     }
 
     .asset-overview__identity {
@@ -759,16 +520,13 @@
         height: 3.5rem;
     }
 
-    .asset-overview__icon svg {
-        width: 1.75rem;
-        height: 1.75rem;
+    .asset-overview__actions {
+        width: 100%;
+        flex-direction: column;
     }
 
-    .asset-overview h1 {
-        font-size: 1.8rem;
-    }
-
-    .asset-overview__edit {
+    .asset-overview__actions .btn,
+    .asset-overview__delete {
         width: 100%;
     }
 
@@ -778,8 +536,6 @@
 
     .asset-overview__detail,
     .asset-overview__detail:first-child,
-    .asset-overview__detail:nth-child(odd),
-    .asset-overview__detail:nth-child(even),
     .asset-overview__detail:last-child {
         padding: 0 0 1rem;
         border-right: 0;
@@ -791,103 +547,29 @@
         border-bottom: 0;
     }
 
-    .asset-page-card__header {
-        align-items: flex-start;
+    .maintenance-history__heading {
+        flex-direction: column;
     }
 
-    .asset-maintenance-form__actions .btn {
+    .maintenance-history__actions {
         width: 100%;
     }
 
-    .maintenance-history__item {
-        gap: 0.75rem;
+    .maintenance-edit-form__row {
+        grid-template-columns: 1fr;
     }
 
-    .maintenance-history__icon {
-        width: 2.6rem;
-        height: 2.6rem;
+    .maintenance-edit-form__actions {
+        flex-direction: column-reverse;
     }
 
-    .maintenance-history__icon svg {
-        width: 1.15rem;
-        height: 1.15rem;
-    }
-
-    .maintenance-history__heading {
-        align-items: flex-start;
-    }
-
-    .maintenance-history__title-group {
-        flex: 1;
-    }
-
-    .maintenance-history__delete {
-        padding-inline: 0.45rem;
-    }
-
-	.asset-overview__actions {
-		width: 100%;
-		flex-direction: column;
-	}
-	
-	.asset-overview__actions .btn,
-	.asset-overview__delete {
-		width: 100%;
-	}
-}
-
-
-/* ===========================
-   Very Small Screens
-=========================== */
-
-@media (max-width: 430px) {
-    .asset-overview__identity {
-        flex-direction: column;
-    }
-
-    .asset-overview__meta {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.55rem;
-    }
-
-    .asset-page-card__header-icon {
-        display: none;
-    }
-
-    .maintenance-history__item {
-        position: relative;
-    }
-
-    .maintenance-history__heading {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .maintenance-history__delete {
-        align-self: flex-start;
-    }
-
-    .maintenance-history__cost {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.3rem;
+    .maintenance-edit-form__actions .btn {
+        width: 100%;
     }
 }
-
-
-/* ===========================
-   Reduced Motion
-=========================== */
 
 @media (prefers-reduced-motion: reduce) {
-    .asset-details-page__back,
-    .maintenance-history__delete {
-        transition: none;
-    }
-
-    .maintenance-history__delete-spinner {
+    .asset-overview__delete-spinner {
         animation-duration: 1.5s;
     }
 }
