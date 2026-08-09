@@ -2,74 +2,164 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/database");
 
+const createToken = (user) => {
+	return jwt.sign(
+		{
+			userId: user.id,
+			email: user.email,
+		},
+		process.env.JWT_SECRET,
+		{
+			expiresIn: "7d",
+		},
+	);
+};
+
 const register = async (req, res) => {
 	try {
-		const {name, email, password} = req.body;
+		const {
+			name,
+			email,
+			password,
+		} = req.body;
 
 		if (!name || !email || !password) {
-			return res.status(400).json({error: "Name, email, and password are required"});
+			return res.status(400).json({
+				error:
+					"Name, email, and password are required",
+			});
 		}
 
-		const existingUser = await pool.query(`
-        SELECT id
-        FROM users
-        WHERE email = $1;
-      `, [email]);
+		const normalizedName = name.trim();
+		const normalizedEmail =
+			email.trim().toLowerCase();
+
+		const existingUser = await pool.query(
+			`
+            SELECT id
+            FROM users
+            WHERE LOWER(email) = $1;
+            `,
+			[normalizedEmail],
+		);
 
 		if (existingUser.rows.length > 0) {
-			return res.status(409).json({error: "User already exists"});
+			return res.status(409).json({
+				error:
+					"An account with this email already exists",
+			});
 		}
 
-		const passwordHash = await bcrypt.hash(password, 10);
+		const passwordHash = await bcrypt.hash(
+			password,
+			10,
+		);
 
-		const result = await pool.query(`
-        INSERT INTO users (
-          name,
-          email,
-          password_hash
-        )
-        VALUES ($1, $2, $3)
-        RETURNING id, name, email, created_at;
-      `, [name, email, passwordHash,]);
+		const result = await pool.query(
+			`
+            INSERT INTO users (
+                name,
+                email,
+                password_hash
+            )
+            VALUES ($1, $2, $3)
+            RETURNING
+                id,
+                name,
+                email,
+                created_at;
+            `,
+			[
+				normalizedName,
+				normalizedEmail,
+				passwordHash,
+			],
+		);
 
-		return res.status(201).json({message: "User registered successfully", user: result.rows[0]});
+		const user = result.rows[0];
+		const token = createToken(user);
+
+		return res.status(201).json({
+			message:
+				"User registered successfully",
+			token,
+			user,
+		});
 	} catch (error) {
-		console.error("Error registering user:", error);
+		/*
+		 * PostgreSQL unique_violation.
+		 *
+		 * This protects against a race where two requests
+		 * for the same email pass the initial existence
+		 * check before either INSERT completes.
+		 */
+		if (error.code === "23505") {
+			return res.status(409).json({
+				error:
+					"An account with this email already exists",
+			});
+		}
 
-		return res.status(500).json({error: "Failed to register user"});
+		console.error(
+			"Error registering user:",
+			error,
+		);
+
+		return res.status(500).json({
+			error: "Failed to register user",
+		});
 	}
 };
 
 const login = async (req, res) => {
 	try {
-		const {email, password} = req.body;
+		const {
+			email,
+			password,
+		} = req.body;
 
 		if (!email || !password) {
-			return res.status(400).json({error: "Email and password are required"});
+			return res.status(400).json({
+				error:
+					"Email and password are required",
+			});
 		}
 
-		const result = await pool.query(`
-          SELECT *
-          FROM users
-          WHERE email = $1;
-        `, [email]);
+		const normalizedEmail =
+			email.trim().toLowerCase();
+
+		const result = await pool.query(
+			`
+            SELECT *
+            FROM users
+            WHERE LOWER(email) = $1;
+            `,
+			[normalizedEmail],
+		);
 
 		if (result.rows.length === 0) {
-			return res.status(401).json({error: "Invalid email or password"});
+			return res.status(401).json({
+				error:
+					"Invalid email or password",
+			});
 		}
 
 		const user = result.rows[0];
 
-		const passwordMatches = await bcrypt.compare(password, user.password_hash);
+		const passwordMatches =
+			await bcrypt.compare(
+				password,
+				user.password_hash,
+			);
 
-		if (! passwordMatches) {
-			return res.status(401).json({error: "Invalid email or password"});
+		if (!passwordMatches) {
+			return res.status(401).json({
+				error:
+					"Invalid email or password",
+			});
 		}
 
-		const token = jwt.sign({
-			userId: user.id,
-			email: user.email
-		}, process.env.JWT_SECRET, {expiresIn: "7d"});
+		const token = createToken(user);
 
 		return res.status(200).json({
 			message: "Login successful",
@@ -77,42 +167,60 @@ const login = async (req, res) => {
 			user: {
 				id: user.id,
 				name: user.name,
-				email: user.email
-			}
+				email: user.email,
+			},
 		});
 	} catch (error) {
-		console.error("Error logging in:", error);
+		console.error(
+			"Error logging in:",
+			error,
+		);
 
-		return res.status(500).json({error: "Failed to login"});
+		return res.status(500).json({
+			error: "Failed to login",
+		});
 	}
 };
 
 const getCurrentUser = async (req, res) => {
 	try {
-		const result = await pool.query(`
-          SELECT
-            id,
-            name,
-            email,
-            created_at
-          FROM users
-          WHERE id = $1;
-        `, [req.user.userId]);
+		const result = await pool.query(
+			`
+            SELECT
+                id,
+                name,
+                email,
+                created_at
+            FROM users
+            WHERE id = $1;
+            `,
+			[req.user.userId],
+		);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "User not found"});
+			return res.status(404).json({
+				error: "User not found",
+			});
 		}
 
-		return res.status(200).json(result.rows[0]);
+		return res.status(200).json(
+			result.rows[0],
+		);
 	} catch (error) {
-		console.error("Error fetching current user:", error);
+		console.error(
+			"Error fetching current user:",
+			error,
+		);
 
-		return res.status(500).json({error: "Failed to retrieve user"});
+		return res.status(500).json({
+			error:
+				"Failed to retrieve user",
+		});
 	}
 };
 
 module.exports = {
 	register,
 	login,
-	getCurrentUser
+	getCurrentUser,
 };
