@@ -1,6 +1,6 @@
 const pool = require("../config/database");
-const {z} = require("zod");
-const {userBelongsToHome} = require("../utils/homePermissions");
+const { z } = require("zod");
+const { userBelongsToHome } = require("../utils/homePermissions");
 
 const getHomes = async (req, res) => {
 	try {
@@ -29,18 +29,18 @@ const getHomes = async (req, res) => {
 	} catch (error) {
 		console.error("Error fetching homes:", error);
 
-		return res.status(500).json({error: "Failed to retrieve homes"});
+		return res.status(500).json({ error: "Failed to retrieve homes" });
 	}
 };
 
 const getHomeById = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		const result = await pool.query(`
@@ -50,34 +50,58 @@ const getHomeById = async (req, res) => {
       `, [id]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Home not found"});
+			return res.status(404).json({ error: "Home not found" });
 		}
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
 		console.error("Error fetching home:", error);
 
-		return res.status(500).json({error: "Failed to retrieve home by ID"});
+		return res.status(500).json({ error: "Failed to retrieve home by ID" });
 	}
 };
 
 const getAssetsByHomeId = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
-		const result = await pool.query(`
-        SELECT *
-        FROM assets
-        WHERE home_id = $1
-        ORDER BY name;
-      `, [id])
-		return res.status(200).json(result.rows);
+		const membership = await userBelongsToHome(
+			req.user.userId,
+			id,
+		);
+
+		if (!membership) {
+			return res.status(403).json({
+				error:
+					"You do not have access to this home",
+			});
+		}
+
+		const result = await pool.query(
+			`
+            SELECT *
+            FROM assets
+            WHERE home_id = $1
+            ORDER BY name;
+            `,
+			[id],
+		);
+
+		return res.status(200).json(
+			result.rows,
+		);
 	} catch (error) {
-		console.error("Error fetching home assets:", error);
+		console.error(
+			"Error fetching home assets:",
+			error,
+		);
 
-		return res.status(500).json({error: "Failed to retrieve assets for home"});
+		return res.status(500).json({
+			error:
+				"Failed to retrieve assets for home",
+		});
 	}
-}
+};
 
 const createHome = async (req, res) => {
 	try {
@@ -94,7 +118,7 @@ const createHome = async (req, res) => {
 		const created_by_user_id = req.user.userId;
 
 		if (!name || !street_address || !city || !state || !postal_code) {
-			return res.status(400).json({error: "Missing required fields"});
+			return res.status(400).json({ error: "Missing required fields" });
 		}
 
 		const result = await pool.query(`
@@ -136,18 +160,18 @@ const createHome = async (req, res) => {
 	} catch (error) {
 		console.error("Error creating home:", error);
 
-		return res.status(500).json({error: "Failed to create home"});
+		return res.status(500).json({ error: "Failed to create home" });
 	}
 };
 
 const updateHome = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		const {
@@ -185,29 +209,29 @@ const updateHome = async (req, res) => {
 		]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Home not found"});
+			return res.status(404).json({ error: "Home not found" });
 		}
 
 		return res.status(200).json(result.rows[0]);
 	} catch (error) {
 		console.error("Error updating home:", error);
 
-		return res.status(500).json({error: "Failed to update home"});
+		return res.status(500).json({ error: "Failed to update home" });
 	}
 };
 
 const deleteHome = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		if (membership.role !== "owner") {
-			return res.status(403).json({error: "Only owners can delete homes"});
+			return res.status(403).json({ error: "Only owners can delete homes" });
 		}
 
 		const assetCheck = await pool.query(`
@@ -218,7 +242,7 @@ const deleteHome = async (req, res) => {
       `, [id]);
 
 		if (assetCheck.rows.length > 0) {
-			return res.status(400).json({error: "Cannot delete home with existing assets"});
+			return res.status(400).json({ error: "Cannot delete home with existing assets" });
 		}
 
 		await pool.query(`
@@ -233,25 +257,25 @@ const deleteHome = async (req, res) => {
 			`, [id]);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({error: "Home not found"});
+			return res.status(404).json({ error: "Home not found" });
 		}
 
-		return res.status(200).json({message: "Home deleted successfully", deletedHome: result.rows[0]});
+		return res.status(200).json({ message: "Home deleted successfully", deletedHome: result.rows[0] });
 	} catch (error) {
 		console.error("Error deleting home:", error);
 
-		return res.status(500).json({error: "Failed to delete home"});
+		return res.status(500).json({ error: "Failed to delete home" });
 	}
 };
 
 const getHomeMembers = async (req, res) => {
 	try {
-		const {id} = req.params;
+		const { id } = req.params;
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		const result = await pool.query(`
@@ -272,27 +296,27 @@ const getHomeMembers = async (req, res) => {
 	} catch (error) {
 		console.error("Error fetching home members:", error);
 
-		return res.status(500).json({error: "Failed to retrieve home members"});
+		return res.status(500).json({ error: "Failed to retrieve home members" });
 	}
 };
 
 const addHomeMember = async (req, res) => {
 	try {
-		const {id} = req.params;
-		const {email, role} = req.body;
+		const { id } = req.params;
+		const { email, role } = req.body;
 
 		if (!email) {
-			return res.status(400).json({error: "Email is required"});
+			return res.status(400).json({ error: "Email is required" });
 		}
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		if (membership.role !== "owner") {
-			return res.status(403).json({error: "Only owners can add home members"});
+			return res.status(403).json({ error: "Only owners can add home members" });
 		}
 
 		const userResult = await pool.query(`
@@ -302,7 +326,7 @@ const addHomeMember = async (req, res) => {
 		`, [email]);
 
 		if (userResult.rows.length === 0) {
-			return res.status(404).json({error: "User not found"});
+			return res.status(404).json({ error: "User not found" });
 		}
 
 		const userToAdd = userResult.rows[0];
@@ -334,22 +358,22 @@ const addHomeMember = async (req, res) => {
 	} catch (error) {
 		console.error("Error adding home member:", error);
 
-		return res.status(500).json({error: "Failed to add home member"});
+		return res.status(500).json({ error: "Failed to add home member" });
 	}
 };
 
 const removeHomeMember = async (req, res) => {
 	try {
-		const {id, userId} = req.params;
+		const { id, userId } = req.params;
 
 		const membership = await userBelongsToHome(req.user.userId, id);
 
-		if (! membership) {
-			return res.status(403).json({error: "You do not have access to this home"});
+		if (!membership) {
+			return res.status(403).json({ error: "You do not have access to this home" });
 		}
 
 		if (membership.role !== "owner") {
-			return res.status(403).json({error: "Only owners can remove members"});
+			return res.status(403).json({ error: "Only owners can remove members" });
 		}
 
 		const targetMembership = await pool.query(`
@@ -360,7 +384,7 @@ const removeHomeMember = async (req, res) => {
 		`, [id, userId]);
 
 		if (targetMembership.rows.length === 0) {
-			return res.status(404).json({error: "Member not found"});
+			return res.status(404).json({ error: "Member not found" });
 		}
 
 		// Prevent deleting the last owner
@@ -373,7 +397,7 @@ const removeHomeMember = async (req, res) => {
 		  `, [id]);
 
 			if (parseInt(ownerCount.rows[0].count) === 1) {
-				return res.status(400).json({error: "Cannot remove the last owner"});
+				return res.status(400).json({ error: "Cannot remove the last owner" });
 			}
 		}
 
@@ -384,11 +408,11 @@ const removeHomeMember = async (req, res) => {
 		  RETURNING *;
 		`, [id, userId]);
 
-		return res.status(200).json({message: "Member removed successfully", removedMember: result.rows[0]});
+		return res.status(200).json({ message: "Member removed successfully", removedMember: result.rows[0] });
 	} catch (error) {
 		console.error("Error removing home member:", error);
 
-		return res.status(500).json({error: "Failed to remove home member"});
+		return res.status(500).json({ error: "Failed to remove home member" });
 	}
 };
 

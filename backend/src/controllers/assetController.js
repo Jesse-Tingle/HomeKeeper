@@ -5,46 +5,107 @@ const getAssetById = async (req, res) => {
 	try {
 		const { id } = req.params;
 
-
-		const result = await pool.query(`
-    SELECT *
-    FROM assets
-    WHERE id = $1;
-  `, [id]);
+		const result = await pool.query(
+			`
+            SELECT *
+            FROM assets
+            WHERE id = $1;
+            `,
+			[id],
+		);
 
 		if (result.rows.length === 0) {
-			return res.status(404).json({ error: "Asset not found" });
+			return res.status(404).json({
+				error: "Asset not found",
+			});
 		}
 
-		return res.status(200).json(result.rows[0]);
+		const asset = result.rows[0];
 
+		const membership = await userBelongsToHome(
+			req.user.userId,
+			asset.home_id,
+		);
 
+		if (!membership) {
+			return res.status(403).json({
+				error:
+					"You do not have access to this asset",
+			});
+		}
+
+		return res.status(200).json(asset);
 	} catch (error) {
-		console.error("Error fetching asset:", error);
+		console.error(
+			"Error fetching asset:",
+			error,
+		);
 
-
-		return res.status(500).json({ error: "Failed to retrieve asset" });
-
-
+		return res.status(500).json({
+			error: "Failed to retrieve asset",
+		});
 	}
 };
 
-const getMaintenanceEventsByAssetId = async (req, res) => {
+const getMaintenanceEventsByAssetId = async (
+	req,
+	res,
+) => {
 	try {
 		const { id } = req.params;
 
-		const result = await pool.query(`
-			SELECT *
-			FROM maintenance_events
-			WHERE asset_id = $1
-			ORDER BY event_date DESC;
-		`, [id]);
+		const assetResult = await pool.query(
+			`
+            SELECT id, home_id
+            FROM assets
+            WHERE id = $1;
+            `,
+			[id],
+		);
 
-		return res.status(200).json(result.rows);
+		if (assetResult.rows.length === 0) {
+			return res.status(404).json({
+				error: "Asset not found",
+			});
+		}
+
+		const asset = assetResult.rows[0];
+
+		const membership = await userBelongsToHome(
+			req.user.userId,
+			asset.home_id,
+		);
+
+		if (!membership) {
+			return res.status(403).json({
+				error:
+					"You do not have access to this asset",
+			});
+		}
+
+		const result = await pool.query(
+			`
+            SELECT *
+            FROM maintenance_events
+            WHERE asset_id = $1
+            ORDER BY event_date DESC;
+            `,
+			[id],
+		);
+
+		return res.status(200).json(
+			result.rows,
+		);
 	} catch (error) {
-		console.error("Error fetching maintenance events:", error);
+		console.error(
+			"Error fetching maintenance events:",
+			error,
+		);
 
-		return res.status(500).json({ error: "Failed to retrieve maintenance events" });
+		return res.status(500).json({
+			error:
+				"Failed to retrieve maintenance events",
+		});
 	}
 };
 
