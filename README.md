@@ -573,27 +573,31 @@ Example:
 
 ```env
 PORT=5000
+NODE_ENV=development
 
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=homekeeper_dev
 DB_USER=your_postgres_username
-DB_PASSWORD=your_postgres_password
+DB_PASSWORD=
 
-JWT_SECRET=replace_with_a_long_random_secret
+JWT_SECRET=replace_with_a_secure_secret_at_least_32_characters
+CLIENT_URL=http://localhost:5173
 ```
 
 ### Environment Variable Reference
 
 | Variable | Required | Description | Example |
 |---|---:|---|---|
-| `PORT` | No | Port used by the Express server | `5000` |
+| `NODE_ENV` | No | Application environment; defaults to `development` | `development` |
+| `PORT` | No | Port used by the Express server; defaults to `5000` | `5000` |
 | `DB_HOST` | Yes | PostgreSQL host | `localhost` |
 | `DB_PORT` | Yes | PostgreSQL port | `5432` |
 | `DB_NAME` | Yes | PostgreSQL database name | `homekeeper_dev` |
 | `DB_USER` | Yes | PostgreSQL username | `postgres` |
-| `DB_PASSWORD` | Yes | PostgreSQL password | `your_password` |
-| `JWT_SECRET` | Yes | Secret used to sign authentication tokens | Long random string |
+| `DB_PASSWORD` | Production | PostgreSQL password; may be blank for local development | `your_password` |
+| `JWT_SECRET` | Yes | Secret used to sign authentication tokens; minimum 32 characters | Long random string |
+| `CLIENT_URL` | Yes | Frontend origin allowed by backend CORS | `http://localhost:5173` |
 
 Generate a strong JWT secret with Node.js:
 
@@ -605,7 +609,7 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 ### Frontend API Configuration
 
-If the frontend API client currently uses a hard-coded local URL, configure it to use a Vite environment variable before deployment.
+The frontend API URL is configured through the `VITE_API_URL` environment variable.
 
 Create:
 
