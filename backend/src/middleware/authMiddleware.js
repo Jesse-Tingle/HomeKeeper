@@ -10,13 +10,18 @@ const authenticateUser = (req, res, next) => {
 			});
 		}
 
-		const [scheme, token] = authHeader.split(" ");
+		const parts = authHeader.trim().split(/\s+/);
 
-		if (scheme !== "Bearer" || !token) {
+		if (
+			parts.length !== 2 ||
+			parts[0].toLowerCase() !== "bearer"
+		) {
 			return res.status(401).json({
 				error: "Invalid authorization header",
 			});
 		}
+
+		const token = parts[1];
 
 		const decoded = jwt.verify(
 			token,
