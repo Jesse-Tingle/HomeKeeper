@@ -6,6 +6,9 @@ const assetRoutes = require("./routes/assetRoutes");
 const authRoutes = require("./routes/authRoutes");
 const healthRoutes = require("./routes/healthRoutes");
 
+const notFound = require("./middleware/notFound");
+const errorHandler = require("./middleware/errorHandler");
+
 const app = express();
 
 app.use(cors({
@@ -23,6 +26,9 @@ app.use("/auth", authRoutes);
 app.use("/homes", homeRoutes);
 app.use("/assets", assetRoutes);
 app.use("/health", healthRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
