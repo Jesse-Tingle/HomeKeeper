@@ -9,99 +9,87 @@ if (!API_BASE_URL) {
 const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
 
-    if (!token) {
-        return {
-            "Content-Type": "application/json"
-        };
+    const headers = {
+        "Content-Type": "application/json",
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
     }
 
-    return {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-    };
+    return headers;
+};
+
+const parseResponse = async (response) => {
+    if (response.status === 204) {
+        return null;
+    }
+
+    const contentType =
+        response.headers.get("content-type");
+
+    if (
+        contentType &&
+        contentType.includes("application/json")
+    ) {
+        return response.json();
+    }
+
+    const text = await response.text();
+
+    return text
+        ? { error: text }
+        : null;
+};
+
+const request = async (
+    endpoint,
+    options = {},
+) => {
+    const response = await fetch(
+        `${API_BASE_URL}${endpoint}`,
+        {
+            ...options,
+            headers: {
+                ...getAuthHeaders(),
+                ...options.headers,
+            },
+        },
+    );
+
+    const data = await parseResponse(response);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            `Request failed with status ${response.status}`,
+        );
+    }
+
+    return data;
 };
 
 const apiClient = {
-    get: async (endpoint) => {
-        const response = await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                headers: getAuthHeaders()
-            }
-        );
+    get: (endpoint) =>
+        request(endpoint),
 
-        const data = await response.json();
+    post: (endpoint, body) =>
+        request(endpoint, {
+            method: "POST",
+            body: JSON.stringify(body),
+        }),
 
-        console.log("POST response data:", data);
+    put: (endpoint, body) =>
+        request(endpoint, {
+            method: "PUT",
+            body: JSON.stringify(body),
+        }),
 
-        if (!response.ok) {
-            throw new Error(data.error || "Request failed");
-        }
-
-        return data;
-    },
-
-    post: async (endpoint, body) => {
-        const response = await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                method: "POST",
-                headers: getAuthHeaders(),
-                body: JSON.stringify(body)
-            }
-        );
-
-        const data = await response.json();
-
-        console.log("POST response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.error || "Request failed");
-        }
-
-        return data;
-    },
-
-    put: async (endpoint, body) => {
-        const response = await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                method: "PUT",
-                headers: getAuthHeaders(),
-                body: JSON.stringify(body)
-            }
-        );
-
-        const data = await response.json();
-
-        console.log("POST response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.error || "Request failed");
-        }
-
-        return data;
-    },
-
-    delete: async (endpoint) => {
-        const response = await fetch(
-            `${API_BASE_URL}${endpoint}`,
-            {
-                method: "DELETE",
-                headers: getAuthHeaders()
-            }
-        );
-
-        const data = await response.json();
-
-        console.log("POST response data:", data);
-
-        if (!response.ok) {
-            throw new Error(data.error || "Request failed");
-        }
-
-        return data;
-    }
+    delete: (endpoint) =>
+        request(endpoint, {
+            method: "DELETE",
+        }),
 };
 
 export default apiClient;
