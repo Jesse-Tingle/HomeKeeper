@@ -5,25 +5,36 @@ const authenticateUser = (req, res, next) => {
 		const authHeader = req.headers.authorization;
 
 		if (!authHeader) {
-			return res.status(401).json({ error: "Authorization header missing" });
+			return res.status(401).json({
+				error: "Authorization header missing",
+			});
 		}
 
-		const token = authHeader.split(" ")[1];
+		const parts = authHeader.trim().split(/\s+/);
 
-		if (!token) {
-			return res.status(401).json({ error: "Token missing" });
+		if (
+			parts.length !== 2 ||
+			parts[0].toLowerCase() !== "bearer"
+		) {
+			return res.status(401).json({
+				error: "Invalid authorization header",
+			});
 		}
 
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		const token = parts[1];
+
+		const decoded = jwt.verify(
+			token,
+			process.env.JWT_SECRET,
+		);
 
 		req.user = decoded;
 
-		console.log("Authorization header:", req.headers.authorization);
-		console.log("Decoded token:", decoded);
-
 		next();
 	} catch (error) {
-		return res.status(401).json({ error: "Invalid token" });
+		return res.status(401).json({
+			error: "Invalid token",
+		});
 	}
 };
 
