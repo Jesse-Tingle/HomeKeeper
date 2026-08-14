@@ -6,8 +6,6 @@ const assetRoutes = require("./routes/assetRoutes");
 const authRoutes = require("./routes/authRoutes");
 const healthRoutes = require("./routes/healthRoutes");
 
-const pool = require("./config/database");
-
 const app = express();
 
 app.use(cors({
@@ -19,11 +17,6 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
 	res.send("Home Maintenance Tracker API is running");
-});
-
-app.get("/db-test", async (req, res) => {
-	const result = await pool.query("SELECT current_database()");
-	res.json(result.rows[0]);
 });
 
 app.use("/auth", authRoutes);
