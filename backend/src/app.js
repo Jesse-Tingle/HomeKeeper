@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const userRoutes = require("./routes/userRoutes");
 const homeRoutes = require("./routes/homeRoutes");
 const assetRoutes = require("./routes/assetRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -28,7 +27,6 @@ app.get("/db-test", async (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
 app.use("/homes", homeRoutes);
 app.use("/assets", assetRoutes);
 app.use("/health", healthRoutes);
