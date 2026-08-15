@@ -6,7 +6,10 @@ const envSchema = z.object({
         .enum(["development", "test", "production"])
         .default("development"),
 
-    DATABASE_URL: z.string().min(1).optional(),
+    DATABASE_URL: z.preprocess(
+        (value) => value === "" ? undefined : value,
+        z.string().min(1).optional(),
+    ),
 
     DB_HOST: z.string().min(1).optional(),
 
