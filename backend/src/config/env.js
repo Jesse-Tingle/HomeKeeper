@@ -13,16 +13,22 @@ const envSchema = z.object({
 
     DB_HOST: z.string().min(1).optional(),
 
+    PORT: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(65535)
+        .default(5000),
+
+    DB_NAME: z.string().min(1).optional(),
+    DB_USER: z.string().min(1).optional(),
+    DB_PASSWORD: z.string().optional(),
     DB_PORT: z.coerce
         .number()
         .int()
         .min(1)
         .max(65535)
         .optional(),
-
-    DB_NAME: z.string().min(1).optional(),
-    DB_USER: z.string().min(1).optional(),
-    DB_PASSWORD: z.string().optional(),
 
     JWT_SECRET: z.string().min(
         32,
