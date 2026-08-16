@@ -575,6 +575,10 @@ Example:
 PORT=5000
 NODE_ENV=development
 
+# Optional managed PostgreSQL connection URL.
+# When set, the individual DB_* values are not required.
+DATABASE_URL=
+
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=homekeeper_dev
@@ -591,13 +595,21 @@ CLIENT_URL=http://localhost:5173
 |---|---:|---|---|
 | `NODE_ENV` | No | Application environment; defaults to `development` | `development` |
 | `PORT` | No | Port used by the Express server; defaults to `5000` | `5000` |
-| `DB_HOST` | Yes | PostgreSQL host | `localhost` |
-| `DB_PORT` | Yes | PostgreSQL port | `5432` |
-| `DB_NAME` | Yes | PostgreSQL database name | `homekeeper_dev` |
-| `DB_USER` | Yes | PostgreSQL username | `postgres` |
-| `DB_PASSWORD` | Production | PostgreSQL password; may be blank for local development | `your_password` |
+| `DATABASE_URL` | No | Managed PostgreSQL connection URL. When provided, the individual `DB_*` connection variables are not required | `postgresql://user:password@host/database` |
+| `DB_HOST` | Unless `DATABASE_URL` is set | PostgreSQL host | `localhost` |
+| `DB_PORT` | Unless `DATABASE_URL` is set | PostgreSQL port | `5432` |
+| `DB_NAME` | Unless `DATABASE_URL` is set | PostgreSQL database name | `homekeeper_dev` |
+| `DB_USER` | Unless `DATABASE_URL` is set | PostgreSQL username | `postgres` |
+| `DB_PASSWORD` | Production, unless `DATABASE_URL` is set | PostgreSQL password; may be blank for local development | `your_password` |
 | `JWT_SECRET` | Yes | Secret used to sign authentication tokens; minimum 32 characters | Long random string |
 | `CLIENT_URL` | Yes | Frontend origin allowed by backend CORS | `http://localhost:5173` |
+
+HomeKeeper supports two PostgreSQL configuration methods:
+
+1. **Connection URL** — Set `DATABASE_URL` when using a managed PostgreSQL provider.
+2. **Individual connection values** — Leave `DATABASE_URL` blank and configure `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, and `DB_PASSWORD`.
+
+When `DATABASE_URL` is configured, it takes precedence over the individual `DB_*` connection values.
 
 Generate a strong JWT secret with Node.js:
 

@@ -6,6 +6,13 @@ const envSchema = z.object({
         .enum(["development", "test", "production"])
         .default("development"),
 
+    DATABASE_URL: z.preprocess(
+        (value) => value === "" ? undefined : value,
+        z.string().min(1).optional(),
+    ),
+
+    DB_HOST: z.string().min(1).optional(),
+
     PORT: z.coerce
         .number()
         .int()
@@ -13,15 +20,15 @@ const envSchema = z.object({
         .max(65535)
         .default(5000),
 
-    DB_HOST: z.string().min(1),
+    DB_NAME: z.string().min(1).optional(),
+    DB_USER: z.string().min(1).optional(),
+    DB_PASSWORD: z.string().optional(),
     DB_PORT: z.coerce
         .number()
         .int()
         .min(1)
-        .max(65535),
-    DB_NAME: z.string().min(1),
-    DB_USER: z.string().min(1),
-    DB_PASSWORD: z.string(),
+        .max(65535)
+        .optional(),
 
     JWT_SECRET: z.string().min(
         32,
@@ -30,16 +37,36 @@ const envSchema = z.object({
 
     CLIENT_URL: z.string().url(),
 }).superRefine((env, ctx) => {
-    if (
-        env.NODE_ENV === "production" &&
-        env.DB_PASSWORD.length === 0
-    ) {
-        ctx.addIssue({
-            code: "custom",
-            path: ["DB_PASSWORD"],
-            message:
-                "DB_PASSWORD is required in production",
+    if (!env.DATABASE_URL) {
+        const requiredDatabaseVariables = [
+            "DB_HOST",
+            "DB_PORT",
+            "DB_NAME",
+            "DB_USER",
+        ];
+
+        requiredDatabaseVariables.forEach((variable) => {
+            if (env[variable] === undefined) {
+                ctx.addIssue({
+                    code: "custom",
+                    path: [variable],
+                    message:
+                        `${variable} is required when DATABASE_URL is not configured`,
+                });
+            }
         });
+
+        if (
+            env.NODE_ENV === "production" &&
+            !env.DB_PASSWORD
+        ) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["DB_PASSWORD"],
+                message:
+                    "DB_PASSWORD is required in production when DATABASE_URL is not configured",
+            });
+        }
     }
 });
 
