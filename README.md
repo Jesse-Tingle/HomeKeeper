@@ -12,9 +12,10 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![JWT](https://img.shields.io/badge/Auth-JWT-000000?logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-2563EB)](#project-status)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-22C55E)](https://home-keeper-alpha.vercel.app)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-2563EB)](#roadmap)
 
-[Features](#features) · [Architecture](#application-architecture) · [Getting Started](#getting-started) · [API](#api-overview) · [Roadmap](#roadmap)
+[Live Demo](https://home-keeper-alpha.vercel.app) · [Features](#features) · [Architecture](#application-architecture) · [Getting Started](#getting-started) · [API](#api-overview) · [Roadmap](#roadmap)
 
 </div>
 
@@ -37,8 +38,9 @@ The application was built as a portfolio project to demonstrate practical full-s
 - Responsive interface design
 - Maintainable project organization
 - Git-based feature development and pull request workflows
+- Cloud deployment and environment-based configuration
 
-> **Current status:** The core application experience is implemented and under active development. Deployment, automated testing, and additional production-hardening work are planned before the first stable release.
+> **Current status:** HomeKeeper is deployed and available as a live full-stack application. Core authentication, property, asset, and maintenance workflows are implemented and verified in production. Automated testing, CI, database migrations, and additional production-hardening work are still in progress.
 
 ---
 
@@ -183,43 +185,42 @@ The product is designed around three core principles:
 
 ## Application Preview
 
-> Add screenshots after the application is deployed or after image files are added to the repository.
+### Live Application
 
-1. Landing page
-2. Dashboard
-3. Homes page
-4. Home details with asset cards
-5. Asset details with maintenance history
-6. Login and registration pages
+HomeKeeper is deployed as a live full-stack application:
 
-Suggested repository structure:
+- **Live application:** https://home-keeper-alpha.vercel.app
+- **API health endpoint:** https://homekeeper-ujw8.onrender.com/health
+
+The production application uses:
 
 ```text
-docs/
-└── images/
-    ├── landing-page.png
-    ├── dashboard.png
-    ├── homes-page.png
-    ├── home-details.png
-    ├── asset-details.png
-    └── authentication.png
+React / Vite
+     │
+     │ Vercel
+     ▼
+Express API
+     │
+     │ Render
+     ▼
+PostgreSQL
+     │
+     │ Neon
+     ▼
+Production Database
 ```
 
+### Screenshots
 
-![Dashboard screenshot](./docs/images/dashboard.png)
+#### Landing Page
 
-### Live Demo
+![Landing Page Screenshot](./docs/images/landing-page.png)
 
-A hosted demo is not currently available.
+#### Dashboard
 
-Once deployed, add:
+![Dashboard Screenshot](./docs/images/dashboard.png)
 
-- **Live application:** `https://your-homekeeper-app-url.com`
-- **API health endpoint:** `https://your-api-url.com/health`
-- **Demo account:** Provide a seeded, non-sensitive account for reviewers
-
----
-
+> Additional screenshots of home, asset, and maintenance workflows will be added as the interface continues to evolve.
 ## User Experience
 
 A typical HomeKeeper workflow is:
@@ -262,6 +263,14 @@ A typical HomeKeeper workflow is:
 | dotenv | Environment variable management |
 | Nodemon | Local development server reloading |
 
+### Production Infrastructure
+
+| Service | Purpose |
+|---|---|
+| Vercel | Hosts and deploys the React/Vite frontend |
+| Render | Hosts and deploys the Express API |
+| Neon | Managed PostgreSQL production database |
+
 ### Development Practices
 
 - Conventional commit messages
@@ -277,36 +286,51 @@ A typical HomeKeeper workflow is:
 
 ## Application Architecture
 
-HomeKeeper uses a client-server architecture:
+HomeKeeper uses a three-tier client-server architecture. In production, the React frontend is hosted on Vercel, the Express API is hosted on Render, and application data is stored in a managed PostgreSQL database on Neon.
 
 ```text
-┌───────────────────────────────┐
-│          React Client         │
-│                               │
-│  Pages · Components · Context │
-│  React Router · API Client    │
-└───────────────┬───────────────┘
-                │
-                │ HTTP / JSON
-                │ Authorization: Bearer <token>
-                ▼
-┌───────────────────────────────┐
-│          Express API          │
-│                               │
-│ Routes · Middleware           │
-│ Controllers · Services        │
-│ Models · Validation           │
-└───────────────┬───────────────┘
-                │
-                │ SQL
-                ▼
-┌───────────────────────────────┐
-│         PostgreSQL DB         │
-│                               │
-│ Users · Homes · Memberships   │
-│ Assets · Maintenance Events   │
-└───────────────────────────────┘
+┌─────────────────────────────────┐
+│          React / Vite           │
+│                                 │
+│ Pages · Components · Context    │
+│ React Router · API Client       │
+│                                 │
+│        Hosted on Vercel         │
+└────────────────┬────────────────┘
+                 │
+                 │ HTTPS / JSON
+                 │ Authorization: Bearer <token>
+                 ▼
+┌─────────────────────────────────┐
+│           Express API           │
+│                                 │
+│ Routes · Middleware             │
+│ Controllers · Validation        │
+│                                 │
+│        Hosted on Render         │
+└────────────────┬────────────────┘
+                 │
+                 │ PostgreSQL
+                 ▼
+┌─────────────────────────────────┐
+│        Neon PostgreSQL          │
+│                                 │
+│ Users · Homes · Memberships     │
+│ Assets · Maintenance Events     │
+│                                 │
+│    Managed Production Database  │
+└─────────────────────────────────┘
 ```
+
+### Production Deployment
+
+The production application is split across three independently deployed services:
+
+- **Frontend — Vercel:** Builds and serves the React/Vite single-page application.
+- **Backend — Render:** Runs the Node.js/Express REST API and exposes the public API endpoints.
+- **Database — Neon:** Provides the managed PostgreSQL database used for production application data.
+
+Environment variables keep deployment-specific configuration outside the source code. The frontend receives the production API URL through `VITE_API_URL`, while the backend uses `CLIENT_URL`, `DATABASE_URL`, and other validated server configuration values.
 
 ### Frontend Responsibilities
 
@@ -471,7 +495,7 @@ Asset
 ## Project Structure
 
 ```text
-home-maintenance-tracker/
+HomeKeeper/
 ├── backend/
 │   ├── database/
 │   │   ├── schema/
@@ -480,14 +504,17 @@ home-maintenance-tracker/
 │   │       └── dev_seed.sql
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── database.js
+│   │   │   ├── database.js
+│   │   │   └── env.js
 │   │   ├── controllers/
 │   │   ├── middleware/
 │   │   ├── models/
 │   │   ├── routes/
 │   │   ├── services/
 │   │   ├── utils/
+│   │   ├── validators/
 │   │   └── app.js
+│   ├── .env.example
 │   ├── package.json
 │   └── package-lock.json
 ├── frontend/
@@ -496,8 +523,6 @@ home-maintenance-tracker/
 │   │   ├── api/
 │   │   │   └── apiClient.js
 │   │   ├── components/
-│   │   │   ├── auth/
-│   │   │   └── ...
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx
 │   │   ├── layouts/
@@ -506,13 +531,18 @@ home-maintenance-tracker/
 │   │   ├── styles/
 │   │   ├── App.jsx
 │   │   └── main.jsx
+│   ├── .env.example
+│   ├── vercel.json
 │   ├── package.json
 │   └── package-lock.json
+├── docs/
+│   └── images/
 ├── .gitignore
+├── LICENSE
 └── README.md
 ```
 
-> The exact structure may evolve as testing, deployment configuration, migrations, and additional features are introduced.
+> The project structure will continue to evolve as automated testing, database migrations, CI, and additional features are introduced.
 
 ---
 
@@ -524,10 +554,10 @@ Install the following before running HomeKeeper locally:
 
 - [Node.js](https://nodejs.org/) 20 or newer
 - npm
-- [PostgreSQL](https://www.postgresql.org/) 15 or newer
+- PostgreSQL 15 or newer **or** access to a compatible managed PostgreSQL database
 - Git
 
-Verify the installations:
+For a local PostgreSQL setup, verify the installations:
 
 ```bash
 node --version
@@ -539,8 +569,8 @@ git --version
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/Jesse-Tingle/home-maintenance-tracker.git
-cd home-maintenance-tracker
+git clone https://github.com/Jesse-Tingle/HomeKeeper.git
+cd HomeKeeper
 ```
 
 ### Install Backend Dependencies
@@ -780,11 +810,15 @@ The API follows REST-style conventions and returns JSON.
 
 ### Base URL
 
-Local development:
+Production: https://homekeeper-ujw8.onrender.com
 
-```text
-http://localhost:5000
-```
+Local development: http://localhost:5000
+
+### Health Check
+
+| Method | Endpoint | Description | Authentication |
+|---|---|---|---|
+| `GET` | `/health` | Returns API and database health status | Public |
 
 ### Authentication Routes
 
@@ -798,38 +832,52 @@ http://localhost:5000
 
 | Method | Endpoint | Description | Authentication |
 |---|---|---|---|
-| `GET` | `/homes` | Returns homes available to the user | Required |
+| `GET` | `/homes` | Returns homes available to the authenticated user | Required |
 | `POST` | `/homes` | Creates a new home | Required |
 | `GET` | `/homes/:id` | Returns a single home | Required |
 | `PUT` | `/homes/:id` | Updates a home | Required |
 | `DELETE` | `/homes/:id` | Deletes a home | Required |
+| `GET` | `/homes/:id/assets` | Returns assets belonging to a home | Required |
+| `GET` | `/homes/:id/members` | Returns members associated with a home | Required |
+| `POST` | `/homes/:id/members` | Adds a member to a home | Required |
+| `DELETE` | `/homes/:id/members/:userId` | Removes a member from a home | Required |
 
 ### Asset Routes
 
 | Method | Endpoint | Description | Authentication |
 |---|---|---|---|
-| `GET` | `/homes/:homeId/assets` | Returns assets belonging to a home | Required |
-| `POST` | `/homes/:homeId/assets` | Creates an asset for a home | Required |
+| `GET` | `/homes/:id/assets` | Returns assets belonging to a home | Required |
+| `POST` | `/assets` | Creates a new asset | Required |
 | `GET` | `/assets/:id` | Returns an individual asset | Required |
 | `PUT` | `/assets/:id` | Updates an asset | Required |
 | `DELETE` | `/assets/:id` | Deletes an asset | Required |
+
+Asset creation uses the `home_id` field in the request body to associate the asset with its parent home.
 
 ### Maintenance Event Routes
 
 | Method | Endpoint | Description | Authentication |
 |---|---|---|---|
-| `GET` | `/assets/:assetId/maintenance-events` | Returns an asset's maintenance history | Required |
-| `POST` | `/assets/:assetId/maintenance-events` | Creates a maintenance event | Required |
-| `GET` | `/maintenance-events/:id` | Returns a maintenance event | Required |
-| `PUT` | `/maintenance-events/:id` | Updates a maintenance event | Required |
-| `DELETE` | `/maintenance-events/:id` | Deletes a maintenance event | Required |
+| `GET` | `/assets/:id/maintenance-events` | Returns maintenance history for an asset | Required |
+| `POST` | `/assets/maintenance-events` | Creates a maintenance event | Required |
+| `PUT` | `/assets/maintenance-events/:id` | Updates a maintenance event | Required |
+| `DELETE` | `/assets/maintenance-events/:id` | Deletes a maintenance event | Required |
 
-> Confirm endpoint paths against the current route files as the API evolves. This table reflects the intended resource model and current application behavior.
+Maintenance event creation uses the `asset_id` field in the request body to associate the event with its parent asset.
 
 ### Example Authenticated Request
 
+Local development:
+
 ```bash
 curl http://localhost:5000/homes \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+Production:
+
+```bash
+curl https://homekeeper-ujw8.onrender.com/homes \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -898,7 +946,9 @@ Validation responsibilities include:
 
 The frontend also performs user-facing checks such as password confirmation before submitting registration data.
 
-A long-term goal is to standardize all API errors using a structure such as:
+The backend also includes centralized fallback handling for unknown routes and unexpected application errors. Unknown routes return structured `404` JSON responses, while unhandled server errors return a generic `500` response without exposing internal error details to the client.
+
+Error responses are currently returned as structured JSON. A future improvement is to standardize all API errors around a consistent application-wide error code and details format, such as:
 
 ```json
 {
@@ -916,28 +966,35 @@ A long-term goal is to standardize all API errors using a structure such as:
 
 The project currently demonstrates several important security practices:
 
-- Password hashing
-- JWT-protected routes
-- Authorization headers
-- Server-side validation
+- Password hashing with `bcryptjs`
+- JWT-protected backend routes
+- Bearer-token authentication headers
+- Server-side request validation with Zod
 - Parameterized PostgreSQL queries
+- Membership-based authorization for protected home and asset resources
 - Protected client-side routes
-- Restricted CORS configuration during local development
-- Secrets stored in environment variables
+- Environment-based CORS configuration
+- Secrets and credentials stored outside source control through environment variables
+- Startup validation for required environment configuration
+- Minimum JWT secret length validation
+- Generic server-error responses that avoid exposing internal details to API clients
+- Development-only database test endpoints removed from the production API
 
 Before production deployment, the following improvements are recommended:
 
+Additional security and production-hardening work planned for future iterations includes:
 - Add Helmet security headers
 - Add rate limiting to authentication endpoints
-- Use an environment-based CORS allowlist
-- Set explicit JWT expiration policies
-- Add refresh-token or secure cookie-based session handling
-- Add centralized production error handling
-- Validate environment variables at startup
-- Add request size limits
+- Set explicit JWT expiration and session policies
+- Evaluate secure HttpOnly cookie-based authentication as an alternative to browser storage
+- Add explicit request body size limits
+- Add structured and redacted production logging
 - Add database migrations
-- Add automated authorization tests
-- Remove or protect development-only endpoints
+- Add automated authentication and authorization tests
+- Add dependency and security scanning to CI
+- Add production error monitoring
+
+Production credentials such as the Neon database connection string and JWT signing secret are configured directly through the deployment environment and are not stored in the repository.
 
 ---
 
@@ -1055,49 +1112,114 @@ Recommended tools:
 
 ## Deployment
 
-The application is not currently deployed.
+HomeKeeper is deployed as a live full-stack application.
 
-A recommended production architecture is:
+### Production URLs
+
+- **Frontend:** https://home-keeper-alpha.vercel.app
+- **Backend API:** https://homekeeper-ujw8.onrender.com
+- **API health check:** https://homekeeper-ujw8.onrender.com/health
+
+### Production Architecture
 
 ```text
-Frontend: Vercel or Netlify
-Backend: Render, Railway, Fly.io, or similar
-Database: Managed PostgreSQL
-CI/CD: GitHub Actions
+Vercel
+  │
+  │ React / Vite frontend
+  ▼
+Render
+  │
+  │ Node.js / Express API
+  ▼
+Neon
+  │
+  │ Managed PostgreSQL
+  ▼
+Production Data
 ```
 
-Before deployment:
+### Frontend Deployment
 
-- Configure production environment variables
-- Replace hard-coded development URLs
-- Configure production CORS
-- Add a health endpoint
-- Run the frontend production build
-- Add database migrations
-- Add production logging
-- Add error monitoring
-- Seed a safe demo account
-- Confirm all secrets are excluded from Git
-- Add automated tests and CI checks
+The React/Vite frontend is deployed on Vercel.
 
+Production configuration includes:
+
+```env
+VITE_API_URL=https://homekeeper-ujw8.onrender.com
+```
+
+Vercel SPA rewrites are configured so React Router routes continue to work when users directly visit or refresh nested application URLs.
+
+### Backend Deployment
+
+The Express API is deployed on Render.
+
+Production environment configuration includes:
+
+- `NODE_ENV`
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `CLIENT_URL`
+- Render-provided `PORT`
+
+The production `CLIENT_URL` is restricted to the deployed Vercel frontend origin.
+
+### Database Deployment
+
+Production data is stored in a managed PostgreSQL database hosted by Neon.
+
+The backend connects through `DATABASE_URL`, while local development can continue using the individual `DB_*` environment variables.
+
+The production database schema includes:
+
+- `users`
+- `homes`
+- `home_memberships`
+- `assets`
+- `maintenance_events`
+
+### Production Verification
+
+The deployed application has been manually smoke-tested for:
+
+- User registration
+- Login and logout
+- Session restoration
+- Home creation and management
+- Asset creation and management
+- Maintenance event creation
+- Maintenance event editing
+- Maintenance event deletion
+- Database persistence
+- Protected routes
+- Production CORS
+- Nested React Router page refreshes
+- API and database health checks
 ---
 
 ## Roadmap
 
 ### Portfolio-Ready Milestone
 
-- [ ] Add polished screenshots and social preview image
-- [ ] Deploy frontend, backend, and database
+- [x] Deploy frontend, backend, and production database
+- [x] Configure environment-based frontend and backend URLs
+- [x] Configure production CORS
+- [x] Add backend health endpoint
+- [x] Add startup environment validation
+- [x] Add centralized fallback error handling
+- [x] Remove development-only API endpoints
+- [x] Complete core home, asset, and maintenance CRUD workflows
+- [x] Add production database connection support
+- [x] Add Vercel SPA routing configuration
+- [ ] Add additional polished screenshots and social preview image
 - [ ] Add a seeded demo account
-- [ ] Add root `.env.example` documentation
-- [ ] Add centralized error handling
-- [ ] Add API security middleware
+- [ ] Add Helmet and authentication rate limiting
 - [ ] Add backend integration tests
 - [ ] Add frontend component tests
+- [ ] Add end-to-end tests
 - [ ] Add GitHub Actions CI
-- [ ] Add database migrations
-- [ ] Complete edit and delete workflows
-- [ ] Add toast notifications
+- [ ] Add formal database migrations
+- [ ] Add structured production logging and monitoring
 - [ ] Complete accessibility audit
 
 ### Product Enhancements
@@ -1123,15 +1245,16 @@ Before deployment:
 
 ## Known Limitations
 
-- The application currently requires local PostgreSQL setup.
-- A hosted demo is not yet available.
-- Automated tests are not yet configured.
-- The backend CORS configuration is currently intended for local development.
-- Database schema changes are managed through SQL setup files rather than formal migrations.
-- Some full edit and delete workflows may still require frontend completion.
-- Maintenance events currently focus on historical records rather than future scheduling.
-- File uploads and document storage are not yet supported.
-- Household invitations and advanced permissions are not yet exposed through the interface.
+- Automated backend, frontend, and end-to-end tests are not yet configured.
+- Database schema changes are currently managed through SQL setup files rather than a formal migration system.
+- Production logging and error monitoring are still minimal.
+- Authentication currently stores JWT credentials in browser storage rather than using an HttpOnly cookie-based session model.
+- Authentication endpoints do not yet include dedicated rate limiting.
+- Additional HTTP security headers have not yet been added through middleware such as Helmet.
+- Maintenance events currently focus on historical records rather than future scheduling and recurring maintenance.
+- File uploads, receipts, manuals, and other document storage are not yet supported.
+- Household membership infrastructure exists, but invitation and advanced role-management workflows are still limited.
+- Automated CI checks have not yet been added.
 
 ---
 
@@ -1263,9 +1386,9 @@ To propose a change:
 
 ## License
 
-This project is available under the MIT License.
+HomeKeeper is licensed under the MIT License.
 
-Add a root `LICENSE` file containing the official MIT License text before treating the project as formally licensed.
+See the [LICENSE](./LICENSE) file for details.
 
 ---
 
@@ -1274,7 +1397,8 @@ Add a root `LICENSE` file containing the official MIT License text before treati
 **Jesse Tingle**
 
 - GitHub: [@Jesse-Tingle](https://github.com/Jesse-Tingle)
-- Repository: [home-maintenance-tracker](https://github.com/Jesse-Tingle/home-maintenance-tracker)
+- Repository: [HomeKeeper](https://github.com/Jesse-Tingle/HomeKeeper)
+- Live Application: [HomeKeeper](https://home-keeper-alpha.vercel.app)
 
 ---
 
